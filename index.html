@@ -15,12 +15,13 @@
     href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=VT323&family=Chivo+Mono:wght@300;400;500&display=swap"
     rel="stylesheet" />
   <link rel="preload" as="image" href="public/cursor/cursor.png" />
-  <link rel="preload" as="image" href="public/npc/npc-idle.webp" />
-  <link rel="preload" as="image" href="public/boss/boss-idle.webp" />
-  <link rel="preload" as="image" href="public/character/character-walk.webp" />
-  <link rel="preload" as="image" href="public/effects/weapon-axe.webp" />
+  <link rel="preload" as="image" href="public/npc/npc-idle.png" />
+  <link rel="preload" as="image" href="public/boss/boss-idle.png" />
+  <link rel="preload" as="image" href="public/character/character-walk.png" />
+  <link rel="preload" as="image" href="public/effects/weapon-slash.png" />
   <link rel="preload" as="image" href="public/effects/arcane-1.webp" />
   <link rel="preload" as="image" href="public/effects/impact-1.webp" />
+  <link rel="preload" as="image" href="public/effects/floor.jpg" />
   <link rel="preload" as="image" href="public/sprite.webp" />
   <style>
     /* ═══════════════════════════════════════════════════════
@@ -50,6 +51,11 @@
       --accent-blue: #3b82f6;
       --accent-purple: #a855f7;
       --accent-cyan: #06b6d4;
+      --wano-gold: #d4a854;
+      --wano-sakura: #f5a0b8;
+      --haki-purple: #6b21a8;
+      --kaido-crimson: #dc2626;
+      --zoro-green: #22c55e;
       --font-heading: 'Space Grotesk', sans-serif;
       --font-accent: 'VT323', monospace;
       --font-mono: 'Chivo Mono', monospace;
@@ -488,7 +494,8 @@
       right: 0;
       bottom: 0;
       left: 0;
-      height: clamp(220px, 50vw, 340px)
+      height: clamp(300px, 55vw, 430px);
+      background: linear-gradient(180deg, rgba(15,15,15,0) 0%, rgba(15,15,15,0.75) 100%)
     }
 
     .game-floor {
@@ -497,78 +504,99 @@
       right: 0;
       bottom: 0;
       left: 0;
-      height: 64px;
-      background-image: url(public/effects/floor.webp);
+      height: 90px;
+      background-image: url(public/effects/floor.jpg);
       background-repeat: repeat-x;
-      background-size: auto 64px;
-      image-rendering: pixelated
+      background-size: auto 90px;
+      image-rendering: auto;
+      border-top: 2px solid var(--wano-gold);
+      z-index: 2
     }
 
     .sprite {
-      image-rendering: pixelated;
-      position: absolute
+      position: absolute;
+      transition: all .3s ease;
+      z-index: 5;
+      /* mix-blend-mode removed so that characters render at 100% solid, maximum color opacity now that they are transparent PNGs! */
     }
 
     .sprite-npc {
-      bottom: 64px;
-      left: 10%;
-      width: 80px;
-      height: 80px;
-      image-rendering: pixelated
+      bottom: 30px;
+      left: 8%;
+      width: 150px;
+      height: 150px;
+      filter: drop-shadow(0 0 15px rgba(255,255,255,0.25));
+      animation: haruCloudFloat 3s ease-in-out infinite
     }
 
     .sprite-boss {
-      bottom: 64px;
-      right: 10%;
-      width: 120px;
-      height: 120px;
-      image-rendering: pixelated;
+      bottom: 15px;
+      right: 8%;
+      width: 210px;
+      height: 210px;
+      filter: drop-shadow(0 0 20px rgba(220, 38, 38, 0.45));
+      animation: kaidoPulse 4s ease-in-out infinite;
       transition: opacity .5s, transform .5s
     }
 
     .sprite-boss.defeated {
       opacity: 0;
-      transform: translateY(40px) rotate(15deg)
+      transform: translateY(60px) rotate(20deg) scale(0.85)
     }
 
     .sprite-char {
-      bottom: 64px;
-      left: 25%;
-      width: 64px;
-      height: 64px;
-      image-rendering: pixelated;
+      bottom: 18px;
+      left: 26%;
+      width: 130px;
+      height: 130px;
+      filter: drop-shadow(0 0 15px var(--haki-purple));
       opacity: 0;
-      transition: opacity .3s, left 1s
+      transition: opacity .3s, left 1s;
+      animation: zoroIdle 2.5s ease-in-out infinite
     }
 
     .sprite-weapon {
-      bottom: 100px;
-      left: 50%;
-      width: 80px;
-      height: 80px;
-      image-rendering: pixelated;
+      bottom: 25px;
+      left: 45%;
+      width: 180px;
+      height: 180px;
       opacity: 0;
-      pointer-events: none
+      pointer-events: none;
+      filter: drop-shadow(0 0 25px var(--accent-green))
     }
 
     .sprite-arcane {
-      bottom: 80px;
-      right: 15%;
-      width: 100px;
-      height: 100px;
-      image-rendering: pixelated;
+      bottom: 20px;
+      right: 12%;
+      width: 180px;
+      height: 180px;
       opacity: 0;
-      pointer-events: none
+      pointer-events: none;
+      filter: drop-shadow(0 0 30px var(--haki-purple))
     }
 
     .sprite-impact {
-      bottom: 80px;
-      right: 12%;
-      width: 100px;
-      height: 100px;
-      image-rendering: pixelated;
+      bottom: 20px;
+      right: 10%;
+      width: 180px;
+      height: 180px;
       opacity: 0;
-      pointer-events: none
+      pointer-events: none;
+      filter: drop-shadow(0 0 30px var(--kaido-crimson))
+    }
+
+    /* ═══ NEW WANO ANIMATIONS ═══ */
+    @keyframes haruCloudFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(2deg); }
+    }
+    @keyframes kaidoPulse {
+      0%, 100% { filter: drop-shadow(0 0 20px rgba(220, 38, 38, 0.45)); }
+      50% { filter: drop-shadow(0 0 35px rgba(220, 38, 38, 0.75)); transform: scale(1.02); }
+    }
+    @keyframes zoroIdle {
+      0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 12px var(--haki-purple)); }
+      50% { transform: translateY(-3px); filter: drop-shadow(0 0 20px var(--haki-purple)); }
     }
 
     /* ═══ DIALOGUE BOX ═══ */
@@ -2623,6 +2651,64 @@
     .skeleton-box {
       height: 32px
     }
+
+    /* ─── CUSTOM WANO SCROLLBAR ─── */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--void-800);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--wano-gold);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--zoro-green);
+    }
+
+    /* ─── PREMIUM WANO CARD HOVER GLOWS ─── */
+    .tcard, .stat-card, .platform-card, .mission-card, .channel-card, .preloader-box {
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    }
+    .tcard:hover, .stat-card:hover, .platform-card:hover, .mission-card:hover, .channel-card:hover {
+      border-color: var(--wano-gold) !important;
+      box-shadow: 0 0 25px rgba(212, 168, 84, 0.35) !important;
+      transform: translateY(-4px);
+    }
+
+    /* ─── SAKURA PETAL PARTICLES ─── */
+    .sakura-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 2;
+    }
+    .sakura-petal {
+      position: absolute;
+      background: var(--wano-sakura);
+      border-radius: 150% 0 150% 150%;
+      opacity: 0;
+      pointer-events: none;
+      animation: sakuraFall 12s linear infinite;
+    }
+    @keyframes sakuraFall {
+      0% {
+        transform: translateY(-20px) rotate(0deg) scale(0.5) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      90% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(105vh) rotate(360deg) scale(0.9) translateX(150px);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 
@@ -2639,7 +2725,7 @@
   <!-- PRELOADER -->
   <div id="preloader">
     <div class="preloader-box">
-      <h2>Loading...</h2>
+      <h2>Setting Sail...</h2>
       <div class="progress-track">
         <div class="progress-segments" id="progress-segments"></div>
       </div>
@@ -2694,7 +2780,7 @@
               <div class="nav-link-slide"><a href="#live-stats" class="nav-link">Live</a></div>
             </div>
             <div class="nav-link-wrap">
-              <div class="nav-link-slide"><a href="#hero" class="nav-center">Karan RJ</a></div>
+              <div class="nav-link-slide"><a href="#hero" class="nav-center">Karan RJ ☠</a></div>
             </div>
             <div class="nav-desktop nav-link-wrap">
               <div class="nav-link-slide"><a href="#missions" class="nav-link">Projects</a></div>
@@ -2726,13 +2812,22 @@
     <div class="hero-clip">
       <div class="hero-fixed">
         <section class="hero-section">
+          <!-- Sakura particles container -->
+          <div class="sakura-container">
+            <div class="sakura-petal" style="left: 10%; width: 12px; height: 12px; animation-delay: 0s; animation-duration: 9s;"></div>
+            <div class="sakura-petal" style="left: 20%; width: 8px; height: 8px; animation-delay: 2s; animation-duration: 11s;"></div>
+            <div class="sakura-petal" style="left: 35%; width: 14px; height: 14px; animation-delay: 4s; animation-duration: 8s;"></div>
+            <div class="sakura-petal" style="left: 50%; width: 10px; height: 10px; animation-delay: 1s; animation-duration: 12s;"></div>
+            <div class="sakura-petal" style="left: 65%; width: 12px; height: 12px; animation-delay: 5s; animation-duration: 10s;"></div>
+            <div class="sakura-petal" style="left: 80%; width: 7px; height: 7px; animation-delay: 3s; animation-duration: 13s;"></div>
+            <div class="sakura-petal" style="left: 90%; width: 15px; height: 15px; animation-delay: 6s; animation-duration: 9s;"></div>
+          </div>
           <div class="hero-content">
-            <h1 class="hero-h1">Your team's security<br />& full-stack extension</h1>
-            <p class="hero-sub">Karan RJ is a cybersecurity specialist and full-stack developer who builds tools that
-              break, detect, and automate. Hack to learn. Build to solve.</p>
+            <h1 class="hero-h1">The Pirate King of Code<br />& Three-Sword Stack</h1>
+            <p class="hero-sub">Karan RJ is a cybersecurity researcher and full-stack developer who builds offensive security tools and impenetrable architectures. Sailing the Grand Line of full-stack development, slicing through bugs with Santoryu precision.</p>
             <div class="hero-cta-wrap">
               <div class="hero-cta-slide">
-                <a class="btn-skew" href="#live-stats"><span>View Live Stats</span></a>
+                <a class="btn-skew" href="#live-stats"><span>View Log Pose (Live Intel) →</span></a>
               </div>
             </div>
           </div>
@@ -2747,12 +2842,12 @@
                 <span class="dialogue-cursor" id="dialogue-caret">▶</span>
               </div>
             </div>
-            <img src="public/npc/npc-idle.webp" alt="" class="sprite sprite-npc" id="sprite-npc" />
-            <img src="public/boss/boss-idle.webp" alt="" class="sprite sprite-boss" id="sprite-boss" />
-            <img src="public/character/character-walk.webp" alt="" class="sprite sprite-char" id="sprite-char" />
-            <img src="public/effects/weapon-axe.webp" alt="" class="sprite sprite-weapon" id="sprite-weapon" />
-            <img src="public/effects/arcane-1.webp" alt="" class="sprite sprite-arcane" id="sprite-arcane" />
-            <img src="public/effects/impact-1.webp" alt="" class="sprite sprite-impact" id="sprite-impact" />
+            <img src="public/npc/npc-idle.png" alt="Monkey D. Luffy in Gear 5 Nika form laughing and floating with sun god clouds" class="sprite sprite-npc" id="sprite-npc" />
+            <img src="public/boss/boss-idle.png" alt="Kaido in his massive hybrid dragon-beast form, looking menacingly with dark Conqueror Haki aura" class="sprite sprite-boss" id="sprite-boss" />
+            <img src="public/character/character-walk.png" alt="Roronoa Zoro standing ready in Wano courtyard, holding his three Katanas in his iconic Santoryu stance" class="sprite sprite-char" id="sprite-char" />
+            <img src="public/effects/weapon-slash.png" alt="Zoro's legendary Santoryu three-sword style glowing green and purple energy slash trail" class="sprite sprite-weapon" id="sprite-weapon" />
+            <img src="public/effects/arcane-1.webp" alt="Pulsing Conqueror's Haki dark lightning energy burst" class="sprite sprite-arcane" id="sprite-arcane" />
+            <img src="public/effects/impact-1.webp" alt="Violent shockwave impact blast from Santoryu sword clash" class="sprite sprite-impact" id="sprite-impact" />
             <div class="game-floor"></div>
           </div>
         </section>
@@ -2763,10 +2858,10 @@
   <!-- STATS (Character Cards) -->
   <div id="stats">
     <div class="stats-header">
-      <div class="section-label reveal-fade"><span>Level 02</span><span>—</span><span>Stats</span></div>
+      <div class="section-label reveal-fade"><span>Wano Arc</span><span>—</span><span>Character Stats</span></div>
       <div class="section-head-row">
-        <h2 class="section-title reveal-fade">The<br />Player.</h2>
-        <p class="section-accent reveal-fade">"Protagonist loaded."</p>
+        <h2 class="section-title reveal-fade">The<br />Swordsman.</h2>
+        <p class="section-accent reveal-fade">"Protagonist loaded. Three-sword style drawn."</p>
       </div>
     </div>
     <div class="cards-row">
@@ -2907,15 +3002,14 @@
   <section id="live-stats">
     <div style="margin-bottom:40px">
       <div class="section-label" style="justify-content:space-between">
-        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px"><span>Level
-            03</span><span>—</span><span>Live Intel</span></div>
+        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px"><span>Grand Line</span><span>—</span><span>Live Intel</span></div>
         <span class="reveal-fade"
           style="color:var(--void-400);font-family:var(--font-mono);font-size:12px;letter-spacing:.1em"
-          id="global-last-synced">◈ Not synced yet</span>
+          id="global-last-synced">◈ Log Pose inactive</span>
       </div>
       <div class="section-head-row" style="display:flex;flex-direction:column;gap:8px">
-        <h2 class="section-title reveal-fade">Live<br />Profile.</h2>
-        <p class="section-accent reveal-fade">"Real-time stats. No cap."</p>
+        <h2 class="section-title reveal-fade">Log<br />Pose.</h2>
+        <p class="section-accent reveal-fade">"Real-time stats. Tracking the New World."</p>
       </div>
     </div>
 
@@ -3119,15 +3213,13 @@
   <section id="missions">
     <div style="margin-bottom:40px">
       <div class="section-label" style="justify-content:space-between">
-        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px"><span>Level
-            04</span><span>—</span><span>Projects</span></div>
+        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px"><span>New World</span><span>—</span><span>Missions</span></div>
         <span class="reveal-fade"
-          style="color:var(--void-400);font-family:var(--font-mono);font-size:12px;letter-spacing:.1em">◈ Active
-          Projects: 4</span>
+          style="color:var(--void-400);font-family:var(--font-mono);font-size:12px;letter-spacing:.1em">◈ Active bounties: 4</span>
       </div>
       <div class="section-head-row" style="display:flex;flex-direction:column;gap:8px">
-        <h2 class="section-title reveal-fade">Latest<br />Drop.</h2>
-        <p class="section-accent reveal-fade">"Check out my latest builds."</p>
+        <h2 class="section-title reveal-fade">Latest<br />Bounty.</h2>
+        <p class="section-accent reveal-fade">"Hunting high-value digital targets. Read the bounty posters."</p>
       </div>
     </div>
     <!-- RUZZ -->
@@ -3259,14 +3351,12 @@
   <section id="faq">
     <div style="margin-bottom:40px">
       <div class="section-label" style="justify-content:space-between">
-        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px"><span>Level
-            05</span><span>—</span><span>FAQ</span></div><span class="reveal-fade"
-          style="color:var(--void-400);font-family:var(--font-mono);font-size:12px;letter-spacing:.1em">◈ Query
-          resolved.</span>
+        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px"><span>Poneglyph</span><span>—</span><span>FAQ</span></div><span class="reveal-fade"
+          style="color:var(--void-400);font-family:var(--font-mono);font-size:12px;letter-spacing:.1em">◈ Deciphered.</span>
       </div>
       <div class="section-head-row" style="display:flex;flex-direction:column;gap:8px">
-        <h2 class="section-title reveal-fade">Got<br />Questions?</h2>
-        <p class="section-accent reveal-fade">"Checking the codex..."</p>
+        <h2 class="section-title reveal-fade">Read the<br />Poneglyph.</h2>
+        <p class="section-accent reveal-fade">"Deciphering ancient knowledge..."</p>
       </div>
     </div>
     <div class="faq-list">
@@ -3344,11 +3434,10 @@
       <div class="contact-inner">
         <div class="contact-left">
           <div class="contact-avail">
-            <div class="contact-dot"></div><span class="contact-avail-text">Available for new projects</span>
+            <div class="contact-dot"></div><span class="contact-avail-text">Summoning the crew for missions</span>
           </div>
-          <h2 class="contact-heading">Let's Build<br />Together.</h2>
-          <p class="contact-sub">Got a project, a security challenge, or just want to connect? I'm always open to
-            discussing new ideas and collaborations.</p>
+          <h2 class="contact-heading">Den Den Mushi<br />Call.</h2>
+          <p class="contact-sub">Got a high-value security audit, a full-stack mission, or want to establish a direct communication channel? Pick up the Den Den Mushi receiver.</p>
         </div>
         <div class="contact-right">
           <div class="channel-card">
@@ -3384,7 +3473,7 @@
           <a class="footer-social" href="https://medium.com/@rjkaran418" target="_blank"
             rel="noopener noreferrer">Medium</a>
         </div>
-        <span class="footer-copy">&copy; 2025 Karan RJ. All rights reserved.</span>
+        <span class="footer-copy">&copy; 2026 Karan RJ. Sailing the Grand Line since 2022. All rights reserved.</span>
       </footer>
     </div>
   </div>
@@ -3406,7 +3495,7 @@
     const MOCK_DATA = {
       github: { name: 'Karan RJ', bio: 'Hack to learn. Build to solve.', public_repos: 9, followers: 4, following: 6, stars: 4, avatar_url: 'https://avatars.githubusercontent.com/u/185403139?v=4', languages: ['Python', 'JavaScript', 'HTML', 'CSS', 'Bash', 'C'] },
       leetcode: { totalSolved: 172, easySolved: 132, mediumSolved: 34, hardSolved: 6, totalEasy: 850, totalMedium: 1800, totalHard: 800, ranking: 930000, streak: 80 },
-      tryhackme: { rooms: 70, streak: 75, badges: 7, rank: '5%', points: 0, level: '0x9][MAGE' },
+      tryhackme: { rooms: 70, streak: 77, badges: 7, rank: '5%', points: 9232, level: '0x9][MAGE', leagueTier: 'gold', globalRank: 112518 },
       hackthebox: { level: 13, seasonRank: '#3341', points: 45, flags: '2/24', tier: 'Bronze' }
     };
 
@@ -3512,22 +3601,78 @@
       throw new Error('LeetCode API unavailable');
     }
 
-    // ─── TRYHACKME (CORS blocked — use cached/mock) ───
+    // ─── TRYHACKME (via public profile API + CORS proxy) ───
     async function fetchTryHackMe() {
       const cached = Cache.get('tryhackme');
       if (cached) return cached;
-      // THM doesn't provide a browser-accessible API (CORS blocked)
-      // We return mock data and mark it as cached
-      const data = { ...MOCK_DATA.tryhackme };
-      Cache.set('tryhackme', data);
-      return data;
+      const thmUrl = `https://tryhackme.com/api/v2/public-profile?username=${PROFILE_CONFIG.tryhackme}`;
+      const proxies = [
+        `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(thmUrl)}`,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(thmUrl)}`,
+        `https://corsproxy.io/?${encodeURIComponent(thmUrl)}`
+      ];
+      for (const url of proxies) {
+        try {
+          const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
+          if (!res.ok) continue;
+          const raw = await res.json();
+          const d = raw.data || raw;
+          if (!d || !d.username) continue;
+          const data = {
+            rooms: d.completedRoomsNumber || MOCK_DATA.tryhackme.rooms,
+            streak: d.streak || MOCK_DATA.tryhackme.streak,
+            badges: d.badgesNumber || MOCK_DATA.tryhackme.badges,
+            rank: (d.topPercentage ? d.topPercentage + '%' : MOCK_DATA.tryhackme.rank),
+            points: d.totalPoints || 0,
+            level: d.level ? ('0x' + d.level + '][MAGE') : MOCK_DATA.tryhackme.level,
+            leagueTier: d.leagueTier || 'N/A',
+            avatar: d.avatar || '',
+            globalRank: d.rank || 0
+          };
+          Cache.set('tryhackme', data);
+          return data;
+        } catch { continue; }
+      }
+      throw new Error('TryHackMe API unavailable');
     }
 
-    // ─── HACK THE BOX (requires auth — use cached/mock) ───
+    // ─── HACK THE BOX (requires auth — try profile scrape, fallback mock) ───
     async function fetchHackTheBox() {
       const cached = Cache.get('hackthebox');
       if (cached) return cached;
-      // HTB requires authentication — use cached/mock data
+      // HTB API requires Bearer token auth — no public API available
+      // We try to scrape the public profile page as a last resort
+      const htbProfileUrl = `https://app.hackthebox.com/users/2064498`;
+      const proxies = [
+        `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(htbProfileUrl)}`,
+        `https://corsproxy.io/?${encodeURIComponent(htbProfileUrl)}`
+      ];
+      for (const url of proxies) {
+        try {
+          const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
+          if (!res.ok) continue;
+          const html = await res.text();
+          // Try to extract data from __NEXT_DATA__ or meta tags
+          const nextMatch = html.match(/<script id="__NEXT_DATA__"[^>]*>(.*?)<\/script>/s);
+          if (nextMatch) {
+            const nextData = JSON.parse(nextMatch[1]);
+            const user = nextData?.props?.pageProps?.user || nextData?.props?.pageProps;
+            if (user && (user.name || user.rank)) {
+              const data = {
+                level: user.level || MOCK_DATA.hackthebox.level,
+                seasonRank: user.season_rank ? '#' + user.season_rank : MOCK_DATA.hackthebox.seasonRank,
+                points: user.points || MOCK_DATA.hackthebox.points,
+                flags: user.user_owns ? user.user_owns + '/' + (user.system_owns || '?') : MOCK_DATA.hackthebox.flags,
+                tier: user.rank_tier || MOCK_DATA.hackthebox.tier,
+                ranking: user.ranking || 0
+              };
+              Cache.set('hackthebox', data);
+              return data;
+            }
+          }
+        } catch { continue; }
+      }
+      // Fallback: use mock/cached data — HTB requires authentication
       const data = { ...MOCK_DATA.hackthebox };
       Cache.set('hackthebox', data);
       return data;
@@ -3604,18 +3749,68 @@
     }
 
     function updateTHMUI(data) {
-      document.getElementById('thm-rooms').textContent = data.rooms;
-      document.getElementById('thm-streak').textContent = data.streak;
-      document.getElementById('thm-badges').textContent = data.badges;
+      animateValue(document.getElementById('thm-rooms'), parseInt(data.rooms) || 0);
+      animateValue(document.getElementById('thm-streak'), parseInt(data.streak) || 0);
+      animateValue(document.getElementById('thm-badges'), parseInt(data.badges) || 0);
       document.getElementById('thm-rank').textContent = data.rank;
+      // Update progress bars dynamically
+      const rankPct = parseInt(data.rank) || 5;
+      setTimeout(() => {
+        document.getElementById('thm-rank-bar').style.width = (100 - rankPct) + '%';
+        document.getElementById('thm-rooms-bar').style.width = Math.min(parseInt(data.rooms) || 0, 100) + '%';
+      }, 200);
+      // Update badge tags with live data
+      const tagsContainer = document.getElementById('thm-badges-tags');
+      tagsContainer.innerHTML = '';
+      const tagItems = [
+        'Top ' + data.rank,
+        data.level || MOCK_DATA.tryhackme.level,
+        data.leagueTier ? (data.leagueTier.charAt(0).toUpperCase() + data.leagueTier.slice(1) + ' League') : '',
+        data.points ? (data.points.toLocaleString() + ' pts') : '',
+        data.globalRank ? ('Rank #' + data.globalRank.toLocaleString()) : ''
+      ].filter(Boolean);
+      tagItems.forEach(t => {
+        const tag = document.createElement('span');
+        tag.className = 'badge-tag';
+        tag.textContent = t;
+        tagsContainer.appendChild(tag);
+      });
+      // Update bar values text
+      const barVals = document.querySelectorAll('#thm-bars .stat-bar-val');
+      if (barVals[0]) barVals[0].textContent = data.rank;
+      if (barVals[1]) barVals[1].textContent = data.rooms;
       document.getElementById('thm-synced').textContent = formatTime(Date.now());
     }
 
     function updateHTBUI(data) {
-      document.getElementById('htb-level').textContent = data.level;
+      animateValue(document.getElementById('htb-level'), parseInt(data.level) || 0);
       document.getElementById('htb-rank').textContent = data.seasonRank;
-      document.getElementById('htb-points').textContent = data.points;
+      animateValue(document.getElementById('htb-points'), parseInt(data.points) || 0);
       document.getElementById('htb-flags').textContent = data.flags;
+      // Update progress bars dynamically
+      setTimeout(() => {
+        document.getElementById('htb-level-bar').style.width = Math.min(parseInt(data.level) || 0, 100) + '%';
+        document.getElementById('htb-points-bar').style.width = Math.min(parseInt(data.points) || 0, 100) + '%';
+      }, 200);
+      // Update bar values text
+      const barVals = document.querySelectorAll('#htb-bars .stat-bar-val');
+      if (barVals[0]) barVals[0].textContent = data.level;
+      if (barVals[1]) barVals[1].textContent = data.points;
+      // Update badge tags
+      const tagsContainer = document.getElementById('htb-badges-tags');
+      tagsContainer.innerHTML = '';
+      const tagItems = [
+        data.tier ? data.tier + ' Tier' : 'Bronze Tier',
+        'Season 11',
+        data.seasonRank || '',
+        '#IN'
+      ].filter(Boolean);
+      tagItems.forEach(t => {
+        const tag = document.createElement('span');
+        tag.className = 'badge-tag';
+        tag.textContent = t;
+        tagsContainer.appendChild(tag);
+      });
       document.getElementById('htb-synced').textContent = formatTime(Date.now());
     }
 
@@ -3782,14 +3977,14 @@
        ═══════════════════════════════════════════════════════ */
     (function () {
       const steps = [
-        { text: "A wild client appears...", showBoss: true },
-        { text: 'Client: We need a security audit. Make it legendary.' },
-        { text: "Karan RJ steps forward.", showChar: true },
-        { text: 'Karan RJ: Say no more. Target scope?' },
-        { text: "Karan RJ used EXPLOIT PIPELINE!", showArcane: true },
-        { text: "It's super effective!", showImpact: true },
-        { text: "Client fainted. Vulnerabilities patched in 48 hours.", bossDefeated: true },
-        { text: "Karan RJ gained 500 EXP. New skill unlocked: CLIENT_WHISPERER" }
+        { text: "A Yonko-class client appears on the shores of Wano...", showBoss: true },
+        { text: "Kaido: You think your code can survive my Thunder Bagua?" },
+        { text: "Roronoa Karan steps forward. Three swords drawn.", showChar: true },
+        { text: "Karan: Nothing happened. But your vulnerabilities will." },
+        { text: "Karan used SANTORYU: ONI GIRI — EXPLOIT PIPELINE!", showArcane: true },
+        { text: "CONQUEROR'S HAKI unleashed! Critical hit!", showImpact: true },
+        { text: "Kaido defeated. The Wano code repository is secured.", bossDefeated: true },
+        { text: "Karan gained 5000 Belly. Bounty increased: ₿500,000,000!" }
       ];
       let step = -1, typing = false;
       const hint = document.getElementById('dialogue-hint'), box = document.getElementById('dialogue-box'), textEl = document.getElementById('dialogue-text'), caret = document.getElementById('dialogue-caret');
@@ -3802,8 +3997,17 @@
         const s = steps[step];
         if (step === 0) { hint.classList.add('show'); box.classList.add('show') }
         if (s.showChar) { char_.style.opacity = '1'; char_.style.left = '35%' }
-        if (s.showArcane) { flashSprite(arcane, 600); flashSprite(weapon, 400) }
-        if (s.showImpact) { flashSprite(impact, 500); document.querySelector('.hero-section').style.animation = 'shake .3s ease'; setTimeout(() => document.querySelector('.hero-section').style.animation = '', 300) }
+        if (s.showArcane) {
+          char_.style.opacity = '0'; // Hide Zoro because he is moving as the slash attack occurs
+          flashSprite(arcane, 600);
+          flashSprite(weapon, 500);
+        }
+        if (s.showImpact) {
+          char_.style.opacity = '1'; // Show Zoro again after the slash completes and impacts Kaido
+          flashSprite(impact, 500);
+          document.querySelector('.hero-section').style.animation = 'shake .3s ease';
+          setTimeout(() => document.querySelector('.hero-section').style.animation = '', 300)
+        }
         if (s.bossDefeated) boss.classList.add('defeated');
         typeText(s.text);
       }
