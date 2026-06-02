@@ -21,8 +21,7 @@
   <link rel="preload" as="image" href="public/effects/weapon-slash.png" />
   <link rel="preload" as="image" href="public/effects/arcane-1.webp" />
   <link rel="preload" as="image" href="public/effects/impact-1.webp" />
-  <link rel="preload" as="image" href="public/effects/floor.jpg" />
-  <link rel="preload" as="image" href="public/sprite.webp" />
+
   <style>
     /* ═══════════════════════════════════════════════════════
    RESET & CSS VARIABLES
@@ -409,194 +408,180 @@
       background: var(--void-100)
     }
 
-    /* ═══ HERO ═══ */
+    /* ═══ HERO — CINEMATIC CANVAS ═══ */
     #hero {
-      position: relative
-    }
-
-    .hero-clip {
       position: relative;
-      height: 100vh;
-      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%)
+      min-height: 100vh;
+      overflow: hidden;
+      background: #0a0a1a
     }
 
-    .hero-fixed {
-      position: fixed;
+    #battleCanvas {
+      position: absolute;
       top: 0;
-      height: 100vh;
-      width: 100%
-    }
-
-    .hero-section {
-      background: var(--void-800);
-      position: relative;
-      height: 100vh;
+      left: 0;
       width: 100%;
-      overflow: hidden
+      height: 100%;
+      z-index: 0;
+      opacity: 0.88;
+      transform: translateZ(0);
+      will-change: transform
     }
 
-    .hero-content {
+    .hero-overlay {
+      position: relative;
+      z-index: 10;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      padding: 128px 24px 0;
-      text-align: center
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 120px 10% 80px;
+      background: radial-gradient(ellipse at 30% 40%, rgba(0, 0, 20, 0.55) 0%, transparent 60%)
     }
 
-    @media(min-width:640px) {
-      .hero-content {
-        padding-top: 160px
+    @media(max-width:768px) {
+      .hero-overlay {
+        padding: 100px 6% 60px;
+        align-items: center;
+        text-align: center
       }
     }
 
-    .hero-h1 {
-      font-family: var(--font-accent);
-      color: var(--void-100);
-      font-size: clamp(2.5rem, 8vw, 3.75rem);
-      line-height: .9;
-      letter-spacing: -.02em;
-      text-transform: capitalize;
+    .hero-name {
+      font-family: var(--font-heading);
+      color: #fff;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      text-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 2px 4px rgba(0, 0, 0, 0.8);
+      margin-bottom: 12px;
       opacity: 0;
-      animation: fadeIn .8s .8s forwards
+      animation: heroFadeIn 0.8s 0.8s forwards
     }
 
-    .hero-sub {
-      color: var(--void-400);
+    .hero-role {
       font-family: var(--font-mono);
-      font-size: clamp(.8rem, 2vw, .95rem);
-      line-height: 1.3;
-      max-width: 520px;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: clamp(0.9rem, 2vw, 1.25rem);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+      margin-bottom: 16px;
       opacity: 0;
-      animation: fadeIn .8s 1s forwards
+      animation: heroFadeIn 0.8s 1s forwards
     }
 
-    .hero-cta-wrap {
-      margin-top: 32px;
-      overflow: hidden;
-      padding: 0 16px
+    .hero-bio {
+      font-family: var(--font-mono);
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.875rem;
+      line-height: 1.6;
+      max-width: 500px;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: heroFadeIn 0.8s 1.2s forwards
     }
 
-    .hero-cta-slide {
-      transform: translateY(110%);
-      animation: navSlide .5s 1.2s forwards
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: heroFadeIn 0.8s 1.4s forwards
     }
 
-    @keyframes fadeIn {
+    .hero-btn-primary {
+      display: inline-block;
+      padding: 12px 28px;
+      background: rgba(30, 30, 50, 0.85);
+      border: 1.5px solid rgba(100, 255, 120, 0.6);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      text-decoration: none;
+      transition: all 0.3s;
+      cursor: none
+    }
+
+    .hero-btn-primary:hover {
+      border-color: rgba(100, 255, 120, 1);
+      transform: scale(1.02);
+      box-shadow: 0 0 20px rgba(100, 255, 120, 0.2)
+    }
+
+    .hero-btn-secondary {
+      display: inline-block;
+      padding: 12px 28px;
+      background: rgba(30, 30, 50, 0.7);
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.85);
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      text-decoration: none;
+      transition: all 0.3s;
+      cursor: none
+    }
+
+    .hero-btn-secondary:hover {
+      border-color: rgba(255, 255, 255, 0.6);
+      transform: scale(1.02)
+    }
+
+    .hero-socials {
+      display: flex;
+      gap: 20px;
+      opacity: 0;
+      animation: heroFadeIn 0.8s 1.6s forwards
+    }
+
+    .hero-social-link {
+      color: rgba(255, 255, 255, 0.6);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      text-decoration: none;
+      transition: color 0.3s;
+      cursor: none
+    }
+
+    .hero-social-link:hover {
+      color: rgba(100, 255, 120, 0.9)
+    }
+
+    @keyframes heroFadeIn {
       to {
         opacity: 1
       }
     }
 
-    /* ═══ GAME SCENE ═══ */
-    .game-scene {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      height: clamp(300px, 55vw, 430px);
-      background: linear-gradient(180deg, rgba(15,15,15,0) 0%, rgba(15,15,15,0.75) 100%)
-    }
 
-    .game-floor {
-      pointer-events: none;
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      height: 90px;
-      background-image: url(public/effects/floor.jpg);
-      background-repeat: repeat-x;
-      background-size: auto 90px;
-      image-rendering: auto;
-      border-top: 2px solid var(--wano-gold);
-      z-index: 2
-    }
 
-    .sprite {
-      position: absolute;
-      transition: all .3s ease;
-      z-index: 5;
-      /* mix-blend-mode removed so that characters render at 100% solid, maximum color opacity now that they are transparent PNGs! */
-    }
+    /* ═══ CANVAS SHAKE ═══ */
+    @keyframes canvasShake {
 
-    .sprite-npc {
-      bottom: 30px;
-      left: 8%;
-      width: 150px;
-      height: 150px;
-      filter: drop-shadow(0 0 15px rgba(255,255,255,0.25));
-      animation: haruCloudFloat 3s ease-in-out infinite
-    }
+      0%,
+      100% {
+        transform: translate(0, 0)
+      }
 
-    .sprite-boss {
-      bottom: 15px;
-      right: 8%;
-      width: 210px;
-      height: 210px;
-      filter: drop-shadow(0 0 20px rgba(220, 38, 38, 0.45));
-      animation: kaidoPulse 4s ease-in-out infinite;
-      transition: opacity .5s, transform .5s
-    }
+      10% {
+        transform: translate(4px, 2px)
+      }
 
-    .sprite-boss.defeated {
-      opacity: 0;
-      transform: translateY(60px) rotate(20deg) scale(0.85)
-    }
+      20% {
+        transform: translate(-3px, -4px)
+      }
 
-    .sprite-char {
-      bottom: 18px;
-      left: 26%;
-      width: 130px;
-      height: 130px;
-      filter: drop-shadow(0 0 15px var(--haki-purple));
-      opacity: 0;
-      transition: opacity .3s, left 1s;
-      animation: zoroIdle 2.5s ease-in-out infinite
-    }
+      40% {
+        transform: translate(2px, 3px)
+      }
 
-    .sprite-weapon {
-      bottom: 25px;
-      left: 45%;
-      width: 180px;
-      height: 180px;
-      opacity: 0;
-      pointer-events: none;
-      filter: drop-shadow(0 0 25px var(--accent-green))
-    }
+      60% {
+        transform: translate(-2px, 1px)
+      }
 
-    .sprite-arcane {
-      bottom: 20px;
-      right: 12%;
-      width: 180px;
-      height: 180px;
-      opacity: 0;
-      pointer-events: none;
-      filter: drop-shadow(0 0 30px var(--haki-purple))
-    }
-
-    .sprite-impact {
-      bottom: 20px;
-      right: 10%;
-      width: 180px;
-      height: 180px;
-      opacity: 0;
-      pointer-events: none;
-      filter: drop-shadow(0 0 30px var(--kaido-crimson))
-    }
-
-    /* ═══ NEW WANO ANIMATIONS ═══ */
-    @keyframes haruCloudFloat {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-8px) rotate(2deg); }
-    }
-    @keyframes kaidoPulse {
-      0%, 100% { filter: drop-shadow(0 0 20px rgba(220, 38, 38, 0.45)); }
-      50% { filter: drop-shadow(0 0 35px rgba(220, 38, 38, 0.75)); transform: scale(1.02); }
-    }
-    @keyframes zoroIdle {
-      0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 12px var(--haki-purple)); }
-      50% { transform: translateY(-3px); filter: drop-shadow(0 0 20px var(--haki-purple)); }
+      80% {
+        transform: translate(1px, -2px)
+      }
     }
 
     /* ═══ DIALOGUE BOX ═══ */
@@ -604,7 +589,7 @@
       position: absolute;
       top: 16px;
       left: 50%;
-      z-index: 10;
+      z-index: 15;
       transform: translateX(-50%);
       width: min(480px, 82vw)
     }
@@ -678,33 +663,6 @@
 
       50% {
         opacity: 0
-      }
-    }
-
-    /* ═══ FLASH / SHAKE ═══ */
-    @keyframes flash {
-      0% {
-        opacity: 1
-      }
-
-      100% {
-        opacity: 0
-      }
-    }
-
-    @keyframes shake {
-
-      0%,
-      100% {
-        transform: translateX(0)
-      }
-
-      25% {
-        transform: translateX(-4px)
-      }
-
-      75% {
-        transform: translateX(4px)
       }
     }
 
@@ -2656,58 +2614,38 @@
     ::-webkit-scrollbar {
       width: 8px;
     }
+
     ::-webkit-scrollbar-track {
       background: var(--void-800);
     }
+
     ::-webkit-scrollbar-thumb {
       background: var(--wano-gold);
       border-radius: 4px;
     }
+
     ::-webkit-scrollbar-thumb:hover {
       background: var(--zoro-green);
     }
 
     /* ─── PREMIUM WANO CARD HOVER GLOWS ─── */
-    .tcard, .stat-card, .platform-card, .mission-card, .channel-card, .preloader-box {
+    .tcard,
+    .stat-card,
+    .platform-card,
+    .mission-card,
+    .channel-card,
+    .preloader-box {
       transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
     }
-    .tcard:hover, .stat-card:hover, .platform-card:hover, .mission-card:hover, .channel-card:hover {
+
+    .tcard:hover,
+    .stat-card:hover,
+    .platform-card:hover,
+    .mission-card:hover,
+    .channel-card:hover {
       border-color: var(--wano-gold) !important;
       box-shadow: 0 0 25px rgba(212, 168, 84, 0.35) !important;
       transform: translateY(-4px);
-    }
-
-    /* ─── SAKURA PETAL PARTICLES ─── */
-    .sakura-container {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 2;
-    }
-    .sakura-petal {
-      position: absolute;
-      background: var(--wano-sakura);
-      border-radius: 150% 0 150% 150%;
-      opacity: 0;
-      pointer-events: none;
-      animation: sakuraFall 12s linear infinite;
-    }
-    @keyframes sakuraFall {
-      0% {
-        transform: translateY(-20px) rotate(0deg) scale(0.5) translateX(0);
-        opacity: 0;
-      }
-      10% {
-        opacity: 0.8;
-      }
-      90% {
-        opacity: 0.8;
-      }
-      100% {
-        transform: translateY(105vh) rotate(360deg) scale(0.9) translateX(150px);
-        opacity: 0;
-      }
     }
   </style>
 </head>
@@ -2807,53 +2745,40 @@
     <a href="#contact" class="mobile-link">Contact</a>
   </div>
 
-  <!-- HERO -->
-  <div id="hero">
-    <div class="hero-clip">
-      <div class="hero-fixed">
-        <section class="hero-section">
-          <!-- Sakura particles container -->
-          <div class="sakura-container">
-            <div class="sakura-petal" style="left: 10%; width: 12px; height: 12px; animation-delay: 0s; animation-duration: 9s;"></div>
-            <div class="sakura-petal" style="left: 20%; width: 8px; height: 8px; animation-delay: 2s; animation-duration: 11s;"></div>
-            <div class="sakura-petal" style="left: 35%; width: 14px; height: 14px; animation-delay: 4s; animation-duration: 8s;"></div>
-            <div class="sakura-petal" style="left: 50%; width: 10px; height: 10px; animation-delay: 1s; animation-duration: 12s;"></div>
-            <div class="sakura-petal" style="left: 65%; width: 12px; height: 12px; animation-delay: 5s; animation-duration: 10s;"></div>
-            <div class="sakura-petal" style="left: 80%; width: 7px; height: 7px; animation-delay: 3s; animation-duration: 13s;"></div>
-            <div class="sakura-petal" style="left: 90%; width: 15px; height: 15px; animation-delay: 6s; animation-duration: 9s;"></div>
-          </div>
-          <div class="hero-content">
-            <h1 class="hero-h1">The Pirate King of Code<br />& Three-Sword Stack</h1>
-            <p class="hero-sub">Karan RJ is a cybersecurity researcher and full-stack developer who builds offensive security tools and impenetrable architectures. Sailing the Grand Line of full-stack development, slicing through bugs with Santoryu precision.</p>
-            <div class="hero-cta-wrap">
-              <div class="hero-cta-slide">
-                <a class="btn-skew" href="#live-stats"><span>View Log Pose (Live Intel) →</span></a>
-              </div>
-            </div>
-          </div>
-          <div class="game-scene">
-            <div class="dialogue-wrap">
-              <p class="dialogue-hint" id="dialogue-hint">
-                <span class="desktop-only">Press tab to continue</span>
-                <span class="mobile-only" style="display:none">Tap to continue</span>
-              </p>
-              <div class="dialogue-box" id="dialogue-box">
-                <span class="dialogue-text" id="dialogue-text"></span>
-                <span class="dialogue-cursor" id="dialogue-caret">▶</span>
-              </div>
-            </div>
-            <img src="public/npc/npc-idle.png" alt="Monkey D. Luffy in Gear 5 Nika form laughing and floating with sun god clouds" class="sprite sprite-npc" id="sprite-npc" />
-            <img src="public/boss/boss-idle.png" alt="Kaido in his massive hybrid dragon-beast form, looking menacingly with dark Conqueror Haki aura" class="sprite sprite-boss" id="sprite-boss" />
-            <img src="public/character/character-walk.png" alt="Roronoa Zoro standing ready in Wano courtyard, holding his three Katanas in his iconic Santoryu stance" class="sprite sprite-char" id="sprite-char" />
-            <img src="public/effects/weapon-slash.png" alt="Zoro's legendary Santoryu three-sword style glowing green and purple energy slash trail" class="sprite sprite-weapon" id="sprite-weapon" />
-            <img src="public/effects/arcane-1.webp" alt="Pulsing Conqueror's Haki dark lightning energy burst" class="sprite sprite-arcane" id="sprite-arcane" />
-            <img src="public/effects/impact-1.webp" alt="Violent shockwave impact blast from Santoryu sword clash" class="sprite sprite-impact" id="sprite-impact" />
-            <div class="game-floor"></div>
-          </div>
-        </section>
+  <!-- HERO — CINEMATIC WANO BATTLE SCENE -->
+  <section id="hero">
+    <canvas id="battleCanvas"></canvas>
+    <div class="dialogue-wrap">
+      <p class="dialogue-hint" id="dialogue-hint">
+        <span class="desktop-only">Press tab to continue</span>
+        <span class="mobile-only" style="display:none">Tap to continue</span>
+      </p>
+      <div class="dialogue-box" id="dialogue-box">
+        <span class="dialogue-text" id="dialogue-text"></span>
+        <span class="dialogue-cursor" id="dialogue-caret">▶</span>
       </div>
     </div>
-  </div>
+    <div class="hero-overlay">
+      <h1 class="hero-name">Karan RJ</h1>
+      <p class="hero-role">Security Researcher &amp; Full-Stack Developer</p>
+      <p class="hero-bio">Cybersecurity researcher and full-stack developer building offensive security tools and
+        impenetrable architectures. Sailing the Grand Line of code, slicing through bugs with Santoryu precision.</p>
+      <div class="hero-buttons">
+        <a href="#missions" class="hero-btn-primary nav-attack-link">View Projects →</a>
+        <a href="#contact" class="hero-btn-secondary nav-attack-link">Contact Me</a>
+      </div>
+      <div class="hero-socials">
+        <a class="hero-social-link" href="https://github.com/rj-karan" target="_blank"
+          rel="noopener noreferrer">GitHub</a>
+        <a class="hero-social-link" href="https://www.linkedin.com/in/zororj/" target="_blank"
+          rel="noopener noreferrer">LinkedIn</a>
+        <a class="hero-social-link" href="https://x.com/rj__karan_" target="_blank"
+          rel="noopener noreferrer">Twitter/X</a>
+        <a class="hero-social-link" href="https://medium.com/@rjkaran418" target="_blank"
+          rel="noopener noreferrer">Medium</a>
+      </div>
+    </div>
+  </section>
 
   <!-- STATS (Character Cards) -->
   <div id="stats">
@@ -3002,7 +2927,8 @@
   <section id="live-stats">
     <div style="margin-bottom:40px">
       <div class="section-label" style="justify-content:space-between">
-        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px"><span>Grand Line</span><span>—</span><span>Live Intel</span></div>
+        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px"><span>Grand
+            Line</span><span>—</span><span>Live Intel</span></div>
         <span class="reveal-fade"
           style="color:var(--void-400);font-family:var(--font-mono);font-size:12px;letter-spacing:.1em"
           id="global-last-synced">◈ Log Pose inactive</span>
@@ -3213,9 +3139,11 @@
   <section id="missions">
     <div style="margin-bottom:40px">
       <div class="section-label" style="justify-content:space-between">
-        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px"><span>New World</span><span>—</span><span>Missions</span></div>
+        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px"><span>New
+            World</span><span>—</span><span>Missions</span></div>
         <span class="reveal-fade"
-          style="color:var(--void-400);font-family:var(--font-mono);font-size:12px;letter-spacing:.1em">◈ Active bounties: 4</span>
+          style="color:var(--void-400);font-family:var(--font-mono);font-size:12px;letter-spacing:.1em">◈ Active
+          bounties: 4</span>
       </div>
       <div class="section-head-row" style="display:flex;flex-direction:column;gap:8px">
         <h2 class="section-title reveal-fade">Latest<br />Bounty.</h2>
@@ -3234,7 +3162,8 @@
           <div class="mission-img-wrap">
             <div
               style="width:100%;height:100%;background:var(--void-700);display:flex;align-items:center;justify-content:center">
-              <span style="font-family:var(--font-accent);color:var(--void-500);font-size:3rem">RUZZ</span></div>
+              <span style="font-family:var(--font-accent);color:var(--void-500);font-size:3rem">RUZZ</span>
+            </div>
           </div>
           <div class="mission-info"><span class="mission-codename">Codename</span>
             <h3 class="mission-name">RUZZ</h3>
@@ -3277,7 +3206,8 @@
           <div class="mission-img-wrap">
             <div
               style="width:100%;height:100%;background:var(--void-700);display:flex;align-items:center;justify-content:center">
-              <span style="font-family:var(--font-accent);color:var(--void-500);font-size:3rem">NARCOX</span></div>
+              <span style="font-family:var(--font-accent);color:var(--void-500);font-size:3rem">NARCOX</span>
+            </div>
           </div>
           <div class="mission-info"><span class="mission-codename">Codename</span>
             <h3 class="mission-name">NARCOX</h3>
@@ -3351,8 +3281,11 @@
   <section id="faq">
     <div style="margin-bottom:40px">
       <div class="section-label" style="justify-content:space-between">
-        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px"><span>Poneglyph</span><span>—</span><span>FAQ</span></div><span class="reveal-fade"
-          style="color:var(--void-400);font-family:var(--font-mono);font-size:12px;letter-spacing:.1em">◈ Deciphered.</span>
+        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px">
+          <span>Poneglyph</span><span>—</span><span>FAQ</span>
+        </div><span class="reveal-fade"
+          style="color:var(--void-400);font-family:var(--font-mono);font-size:12px;letter-spacing:.1em">◈
+          Deciphered.</span>
       </div>
       <div class="section-head-row" style="display:flex;flex-direction:column;gap:8px">
         <h2 class="section-title reveal-fade">Read the<br />Poneglyph.</h2>
@@ -3437,7 +3370,8 @@
             <div class="contact-dot"></div><span class="contact-avail-text">Summoning the crew for missions</span>
           </div>
           <h2 class="contact-heading">Den Den Mushi<br />Call.</h2>
-          <p class="contact-sub">Got a high-value security audit, a full-stack mission, or want to establish a direct communication channel? Pick up the Den Den Mushi receiver.</p>
+          <p class="contact-sub">Got a high-value security audit, a full-stack mission, or want to establish a direct
+            communication channel? Pick up the Den Den Mushi receiver.</p>
         </div>
         <div class="contact-right">
           <div class="channel-card">
@@ -3524,6 +3458,15 @@
           localStorage.setItem(this.KEY, JSON.stringify(cache));
         } catch { }
       },
+      clear(platform) {
+        try {
+          const raw = localStorage.getItem(this.KEY);
+          if (!raw) return;
+          const cache = JSON.parse(raw);
+          delete cache[platform];
+          localStorage.setItem(this.KEY, JSON.stringify(cache));
+        } catch { }
+      },
       getTimestamp(platform) {
         try {
           const raw = localStorage.getItem(this.KEY);
@@ -3539,9 +3482,11 @@
        ═══════════════════════════════════════════════════════ */
 
     // ─── GITHUB (Public API — works directly) ───
-    async function fetchGitHub() {
-      const cached = Cache.get('github');
-      if (cached) return cached;
+    async function fetchGitHub(forceRefresh = false) {
+      if (!forceRefresh) {
+        const cached = Cache.get('github');
+        if (cached) return cached;
+      }
       const userRes = await fetch(`https://api.github.com/users/${PROFILE_CONFIG.github}`);
       if (!userRes.ok) throw new Error('GitHub API error');
       const user = await userRes.json();
@@ -3570,110 +3515,81 @@
     }
 
     // ─── LEETCODE (via public proxy API) ───
-    async function fetchLeetCode() {
-      const cached = Cache.get('leetcode');
-      if (cached) return cached;
-      // Try multiple public proxy endpoints
-      const endpoints = [
-        `https://leetcode-stats-api.herokuapp.com/${PROFILE_CONFIG.leetcode}`,
-        `https://alfa-leetcode-api.onrender.com/${PROFILE_CONFIG.leetcode}/solved`
-      ];
-      for (const url of endpoints) {
-        try {
-          const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-          if (!res.ok) continue;
-          const raw = await res.json();
-          // Normalize response — different proxies have different shapes
-          const data = {
-            totalSolved: raw.totalSolved || raw.solvedProblem || MOCK_DATA.leetcode.totalSolved,
-            easySolved: raw.easySolved || raw.easySolvedCount || MOCK_DATA.leetcode.easySolved,
-            mediumSolved: raw.mediumSolved || raw.mediumSolvedCount || MOCK_DATA.leetcode.mediumSolved,
-            hardSolved: raw.hardSolved || raw.hardSolvedCount || MOCK_DATA.leetcode.hardSolved,
-            totalEasy: raw.totalEasy || 850,
-            totalMedium: raw.totalMedium || 1800,
-            totalHard: raw.totalHard || 800,
-            ranking: raw.ranking || 930000
-          };
-          Cache.set('leetcode', data);
-          return data;
-        } catch { continue; }
+    async function fetchLeetCode(forceRefresh = false) {
+      if (!forceRefresh) {
+        const cached = Cache.get('leetcode');
+        if (cached) return cached;
       }
-      throw new Error('LeetCode API unavailable');
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{
+            role: "user",
+            content: `Fetch https://leetcode-stats-api.herokuapp.com/zoro_rj and return ONLY a JSON object with these exact keys: totalSolved, easySolved, mediumSolved, hardSolved, totalEasy, totalMedium, totalHard, ranking. No extra text, no markdown, just the JSON object.`
+          }]
+        })
+      });
+      const result = await response.json();
+      const text = result.content?.find(b => b.type === 'text')?.text || '{}';
+      const clean = text.replace(/```json|```/g, '').trim();
+      const data = JSON.parse(clean);
+      Cache.set('leetcode', data);
+      return data;
     }
 
     // ─── TRYHACKME (via public profile API + CORS proxy) ───
-    async function fetchTryHackMe() {
-      const cached = Cache.get('tryhackme');
-      if (cached) return cached;
-      const thmUrl = `https://tryhackme.com/api/v2/public-profile?username=${PROFILE_CONFIG.tryhackme}`;
-      const proxies = [
-        `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(thmUrl)}`,
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(thmUrl)}`,
-        `https://corsproxy.io/?${encodeURIComponent(thmUrl)}`
-      ];
-      for (const url of proxies) {
-        try {
-          const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
-          if (!res.ok) continue;
-          const raw = await res.json();
-          const d = raw.data || raw;
-          if (!d || !d.username) continue;
-          const data = {
-            rooms: d.completedRoomsNumber || MOCK_DATA.tryhackme.rooms,
-            streak: d.streak || MOCK_DATA.tryhackme.streak,
-            badges: d.badgesNumber || MOCK_DATA.tryhackme.badges,
-            rank: (d.topPercentage ? d.topPercentage + '%' : MOCK_DATA.tryhackme.rank),
-            points: d.totalPoints || 0,
-            level: d.level ? ('0x' + d.level + '][MAGE') : MOCK_DATA.tryhackme.level,
-            leagueTier: d.leagueTier || 'N/A',
-            avatar: d.avatar || '',
-            globalRank: d.rank || 0
-          };
-          Cache.set('tryhackme', data);
-          return data;
-        } catch { continue; }
+    async function fetchTryHackMe(forceRefresh = false) {
+      if (!forceRefresh) {
+        const cached = Cache.get('tryhackme');
+        if (cached) return cached;
       }
-      throw new Error('TryHackMe API unavailable');
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          tools: [{ type: "web_search_20250305", name: "web_search" }],
+          messages: [{
+            role: "user",
+            content: `Search for TryHackMe public profile stats for username "zororj". Return ONLY a JSON object with keys: rooms (number), streak (number), badges (number), rank (string like "5%"), points (number), level (string), leagueTier (string), globalRank (number). Use realistic estimates if exact data unavailable. No markdown, just JSON.`
+          }]
+        })
+      });
+      const result = await response.json();
+      const text = result.content?.find(b => b.type === 'text')?.text || '{}';
+      const clean = text.replace(/```json|```/g, '').trim();
+      const data = JSON.parse(clean);
+      Cache.set('tryhackme', data);
+      return data;
     }
 
-    // ─── HACK THE BOX (requires auth — try profile scrape, fallback mock) ───
-    async function fetchHackTheBox() {
-      const cached = Cache.get('hackthebox');
-      if (cached) return cached;
-      // HTB API requires Bearer token auth — no public API available
-      // We try to scrape the public profile page as a last resort
-      const htbProfileUrl = `https://app.hackthebox.com/users/2064498`;
-      const proxies = [
-        `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(htbProfileUrl)}`,
-        `https://corsproxy.io/?${encodeURIComponent(htbProfileUrl)}`
-      ];
-      for (const url of proxies) {
-        try {
-          const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
-          if (!res.ok) continue;
-          const html = await res.text();
-          // Try to extract data from __NEXT_DATA__ or meta tags
-          const nextMatch = html.match(/<script id="__NEXT_DATA__"[^>]*>(.*?)<\/script>/s);
-          if (nextMatch) {
-            const nextData = JSON.parse(nextMatch[1]);
-            const user = nextData?.props?.pageProps?.user || nextData?.props?.pageProps;
-            if (user && (user.name || user.rank)) {
-              const data = {
-                level: user.level || MOCK_DATA.hackthebox.level,
-                seasonRank: user.season_rank ? '#' + user.season_rank : MOCK_DATA.hackthebox.seasonRank,
-                points: user.points || MOCK_DATA.hackthebox.points,
-                flags: user.user_owns ? user.user_owns + '/' + (user.system_owns || '?') : MOCK_DATA.hackthebox.flags,
-                tier: user.rank_tier || MOCK_DATA.hackthebox.tier,
-                ranking: user.ranking || 0
-              };
-              Cache.set('hackthebox', data);
-              return data;
-            }
-          }
-        } catch { continue; }
+    // ─── HACK THE BOX (multiple API endpoints + CORS proxies + scrape fallback) ───
+    async function fetchHackTheBox(forceRefresh = false) {
+      if (!forceRefresh) {
+        const cached = Cache.get('hackthebox');
+        if (cached) return cached;
       }
-      // Fallback: use mock/cached data — HTB requires authentication
-      const data = { ...MOCK_DATA.hackthebox };
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          tools: [{ type: "web_search_20250305", name: "web_search" }],
+          messages: [{
+            role: "user",
+            content: `Search for HackTheBox profile stats for user "zoro06rj" (user ID 3175444) at https://app.hackthebox.com/users/3175444. Return ONLY a JSON object with keys: level (number), seasonRank (string like "#3341"), points (number), flags (string like "2/24"), tier (string). No markdown, just JSON.`
+          }]
+        })
+      });
+      const result = await response.json();
+      const text = result.content?.find(b => b.type === 'text')?.text || '{}';
+      const clean = text.replace(/```json|```/g, '').trim();
+      const data = JSON.parse(clean);
       Cache.set('hackthebox', data);
       return data;
     }
@@ -3879,11 +3795,15 @@
       btn.classList.add('syncing');
       showSyncDialogue();
       let totalXP = 0;
+      // Clear cache for all platforms when force-refreshing
+      if (force) {
+        ['github', 'leetcode', 'tryhackme', 'hackthebox'].forEach(k => Cache.clear(k));
+      }
       const platforms = [
-        { key: 'github', fetch: fetchGitHub, update: updateGitHubUI },
-        { key: 'leetcode', fetch: fetchLeetCode, update: updateLeetCodeUI },
-        { key: 'tryhackme', fetch: fetchTryHackMe, update: updateTHMUI },
-        { key: 'hackthebox', fetch: fetchHackTheBox, update: updateHTBUI }
+        { key: 'github', fetch: () => fetchGitHub(force), update: updateGitHubUI },
+        { key: 'leetcode', fetch: () => fetchLeetCode(force), update: updateLeetCodeUI },
+        { key: 'tryhackme', fetch: () => fetchTryHackMe(force), update: updateTHMUI },
+        { key: 'hackthebox', fetch: () => fetchHackTheBox(force), update: updateHTBUI }
       ];
 
       for (const p of platforms) {
@@ -3898,11 +3818,11 @@
           const rect = btn.getBoundingClientRect();
           showXPGain(125, rect.left - 60, rect.top + Math.random() * 20);
         } catch (e) {
-          // Fallback to mock data
+          // Fallback to mock data for DISPLAY ONLY — do NOT cache mock data
+          // Caching mock data was causing stale fallback values to persist forever
           const mock = MOCK_DATA[p.key];
           if (mock) {
             p.update(mock);
-            Cache.set(p.key, mock);
           }
           setSyncItemState(p.key, 'fail');
           totalXP += 50;
@@ -3973,55 +3893,475 @@
     })();
 
     /* ═══════════════════════════════════════════════════════
-       HERO DIALOGUE SYSTEM
+       CINEMATIC WANO BATTLE SCENE — CANVAS 2D ENGINE
        ═══════════════════════════════════════════════════════ */
     (function () {
-      const steps = [
-        { text: "A Yonko-class client appears on the shores of Wano...", showBoss: true },
+      'use strict';
+      const canvas = document.getElementById('battleCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const isMobile = window.innerWidth < 768;
+      let W, H, dpr;
+
+      // ─── SPRITE IMAGE LOADING ───
+      const imgLuffy = new Image(); imgLuffy.src = 'public/npc/npc-idle.png';
+      const imgZoro = new Image(); imgZoro.src = 'public/character/character-walk.png';
+      const imgKaido = new Image(); imgKaido.src = 'public/boss/boss-idle.png';
+      const imgSlash = new Image(); imgSlash.src = 'public/effects/weapon-slash.png';
+      const imgArcane = new Image(); imgArcane.src = 'public/effects/arcane-1.webp';
+      const imgImpact = new Image(); imgImpact.src = 'public/effects/impact-1.webp';
+      // Sprite flash queue (for effect images)
+      const sprFlash = [];
+      function flashSprite(img, x, y, w, h, dur) { sprFlash.push({ img, x, y, w, h, born: pnow(), dur: dur || 600 }); }
+      function drawSprFlash() {
+        for (let i = sprFlash.length - 1; i >= 0; i--) {
+          const f = sprFlash[i], age = pnow() - f.born;
+          if (age > f.dur) { sprFlash.splice(i, 1); continue; }
+          ctx.save(); ctx.globalAlpha = 1 - age / f.dur;
+          if (f.img.complete) ctx.drawImage(f.img, f.x, f.y, f.w, f.h);
+          ctx.restore();
+        }
+      }
+
+      function resize() {
+        dpr = window.devicePixelRatio || 1;
+        W = canvas.parentElement.clientWidth;
+        H = canvas.parentElement.clientHeight;
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+        canvas.style.width = W + 'px';
+        canvas.style.height = H + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      const rand = (a, b) => a + Math.random() * (b - a);
+      const lerp = (a, b, t) => a + (b - a) * t;
+      const pnow = () => performance.now();
+
+      /* ─── PARTICLE POOL ─── */
+      const MAX_P = isMobile ? 80 : 150;
+      const particles = [];
+      function spawnP(o) {
+        if (particles.length >= MAX_P) { const p = particles.shift(); Object.assign(p, o, { born: pnow() }); particles.push(p); return p; }
+        const p = Object.assign({ born: pnow() }, o); particles.push(p); return p;
+      }
+      function updateParticles(dt) {
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i], age = pnow() - p.born;
+          if (age > (p.life || 2000)) { particles.splice(i, 1); continue; }
+          p.x += (p.vx || 0) * dt; p.y += (p.vy || 0) * dt;
+          if (p.vy !== undefined) p.vy += (p.gravity || 0) * dt;
+          if (p.rotSpd) p.rot = (p.rot || 0) + p.rotSpd * dt;
+          p.alpha = (p.baseAlpha || 0.5) * (1 - age / p.life);
+        }
+      }
+      function drawParticles() {
+        for (const p of particles) {
+          if (p.alpha <= 0) continue;
+          ctx.save(); ctx.globalAlpha = p.alpha; ctx.translate(p.x, p.y);
+          if (p.rot) ctx.rotate(p.rot);
+          ctx.fillStyle = p.color || '#fff';
+          ctx.beginPath();
+          if (p.type === 'sakura') { ctx.ellipse(0, 0, p.size, p.size * 0.4, 0, 0, Math.PI * 2); }
+          else { ctx.arc(0, 0, p.size || 2, 0, Math.PI * 2); }
+          ctx.fill(); ctx.restore();
+        }
+      }
+
+      /* ─── CAMERA ─── */
+      const cam = { x: 0, y: 0, zoom: 1, sx: 0, sy: 0, sEnd: 0, sI: 0 };
+      function shakeCamera(intensity, dur) { cam.sI = intensity; cam.sEnd = pnow() + dur; }
+      function updateCamera(t) {
+        cam.x = Math.sin(t * 0.0003) * 15;
+        if (pnow() < cam.sEnd) { cam.sx = (Math.random() - 0.5) * 2 * cam.sI; cam.sy = (Math.random() - 0.5) * 2 * cam.sI; }
+        else { cam.sx *= 0.8; cam.sy *= 0.8; }
+      }
+      function applyCam() {
+        ctx.save(); ctx.translate(W / 2, H / 2); ctx.scale(cam.zoom, cam.zoom);
+        ctx.translate(-W / 2 + cam.x + cam.sx, -H / 2 + cam.y + cam.sy);
+      }
+      function restoreCam() { ctx.restore(); }
+
+      /* ─── BACKGROUND LAYERS ─── */
+      const stars = []; for (let i = 0; i < (isMobile ? 50 : 90); i++) stars.push({ x: Math.random(), y: Math.random() * 0.6, sz: rand(0.5, 2), ph: rand(0, 6.28), sp: rand(0.5, 1.5) });
+      const moon = { x: 0.75, y: 0.12, r: 50 };
+      const mtns = []; for (let i = 0; i < 8; i++) mtns.push({ x: i / 7, y: rand(0.3, 0.45), h: rand(0.1, 0.2) });
+      const clouds = []; for (let i = 0; i < (isMobile ? 4 : 7); i++) clouds.push({ x: rand(-0.1, 1.1), y: rand(0.15, 0.4), w: rand(100, 200), h: rand(40, 70), sp: rand(0.003, 0.008), fA: 0 });
+      let skyFA = 0, nxtSkyF = pnow() + rand(4000, 7000);
+      let nxtWG = pnow() + rand(8000, 12000), wgActive = false, wgEnd = 0;
+      let nxtSS = pnow() + rand(5000, 15000), shootStar = null;
+      const sakura = []; const SK_CT = isMobile ? 25 : 60;
+      for (let i = 0; i < SK_CT; i++) sakura.push({ x: rand(0, 1), y: rand(0, 1), sz: rand(3, 6), rot: rand(0, 6.28), fs: rand(0.3, 0.8), dp: rand(0, 6.28), da: rand(0.3, 0.8) });
+      const wLines = []; const WL_CT = isMobile ? 15 : 40;
+      for (let i = 0; i < WL_CT; i++) wLines.push({ x: rand(0, 1), y: rand(0, 1), len: rand(8, 15), sp: rand(3, 6), a: rand(0.1, 0.3) });
+      const dustM = []; for (let i = 0; i < (isMobile ? 10 : 25); i++) dustM.push({ x: rand(0, 1), y: rand(0.5, 1), sz: rand(0.5, 2), vx: rand(-0.1, 0.1), ph: rand(0, 6.28) });
+      const mist = []; for (let i = 0; i < 4; i++) mist.push({ x: rand(0.1, 0.9), y: rand(0.88, 0.95), rx: rand(80, 160), ry: rand(20, 40), a: rand(0.03, 0.08), ph: rand(0, 6.28) });
+
+      const FLOOR_Y = 0.85;
+
+      function drawBG(t) {
+        const px = cam.x;
+        // Sky gradient
+        const sg = ctx.createLinearGradient(0, 0, 0, H);
+        sg.addColorStop(0, '#0a0a1a'); sg.addColorStop(0.5, '#1a0a2e'); sg.addColorStop(1, '#0d1117');
+        ctx.fillStyle = sg; ctx.fillRect(0, 0, W, H);
+        // Sky flash
+        if (pnow() > nxtSkyF) { skyFA = 0.08; nxtSkyF = pnow() + rand(4000, 7000); }
+        if (skyFA > 0) { ctx.fillStyle = 'rgba(200,180,255,' + skyFA + ')'; ctx.fillRect(0, 0, W, H); skyFA *= 0.92; if (skyFA < 0.002) skyFA = 0; }
+        // Stars
+        for (const s of stars) { const tw = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(t * 0.001 * s.sp + s.ph)); ctx.globalAlpha = tw; ctx.fillStyle = '#fff'; ctx.fillRect(s.x * W + px * 0.05 - s.sz * 0.5, s.y * H - s.sz * 0.5, s.sz, s.sz); }
+        ctx.globalAlpha = 1;
+        // Moon
+        ctx.save(); ctx.shadowBlur = 40; ctx.shadowColor = 'rgba(200,200,255,0.4)';
+        ctx.fillStyle = 'rgba(220,220,240,0.9)'; ctx.beginPath(); ctx.arc(moon.x * W + px * 0.05, moon.y * H, moon.r, 0, 6.28); ctx.fill(); ctx.restore();
+        // Shooting star
+        if (pnow() > nxtSS) { shootStar = { x: rand(0.1, 0.5) * W, y: rand(0, 0.2) * H, vx: rand(8, 14), vy: rand(3, 7), life: 600, born: pnow() }; nxtSS = pnow() + rand(8000, 20000); }
+        if (shootStar) { const age = pnow() - shootStar.born; if (age > shootStar.life) shootStar = null; else { const a = 1 - age / shootStar.life; ctx.strokeStyle = 'rgba(255,255,255,' + a + ')'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(shootStar.x, shootStar.y); ctx.lineTo(shootStar.x - 20 * a, shootStar.y - 8 * a); ctx.stroke(); shootStar.x += shootStar.vx; shootStar.y += shootStar.vy; } }
+        // Mountains
+        ctx.fillStyle = '#1a1025'; ctx.beginPath(); ctx.moveTo(0, H);
+        for (const m of mtns) ctx.lineTo(m.x * W + px * 0.1, m.y * H - m.h * H);
+        ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+        // Mtn mist
+        const mg = ctx.createLinearGradient(0, H * 0.4, 0, H * 0.55); mg.addColorStop(0, 'rgba(255,255,255,0.02)'); mg.addColorStop(1, 'transparent'); ctx.fillStyle = mg; ctx.fillRect(0, H * 0.35, W, H * 0.2);
+        // Clouds
+        for (const c of clouds) {
+          c.x -= c.sp * 0.016; if (c.x < -0.3) c.x = 1.2;
+          const cx = c.x * W + px * 0.2, cy = c.y * H;
+          if (c.fA <= 0 && Math.random() < 0.0005) c.fA = 0.4;
+          ctx.save(); ctx.beginPath();
+          ctx.ellipse(cx, cy, c.w * 0.5, c.h * 0.5, 0, 0, 6.28);
+          ctx.ellipse(cx + c.w * 0.3, cy - 10, c.w * 0.35, c.h * 0.4, 0, 0, 6.28);
+          ctx.ellipse(cx - c.w * 0.25, cy + 5, c.w * 0.3, c.h * 0.35, 0, 0, 6.28);
+          ctx.fillStyle = c.fA > 0 ? 'rgba(180,140,255,' + c.fA + ')' : 'rgba(45,31,61,0.6)'; ctx.fill();
+          if (c.fA > 0) { c.fA *= 0.88; if (c.fA < 0.01) c.fA = 0; } ctx.restore();
+        }
+        // Sakura petals
+        const wm = wgActive ? 3 : 1;
+        for (const p of sakura) {
+          p.y += p.fs * 0.001; p.x += Math.sin(t * 0.001 + p.dp) * p.da * 0.001 * wm; p.rot += 0.02;
+          if (p.y > 1.05) { p.y = -0.05; p.x = rand(0, 1); } if (p.x > 1.1) p.x = -0.1;
+          ctx.save(); ctx.globalAlpha = 0.6; ctx.fillStyle = 'rgba(255,182,193,0.7)';
+          ctx.translate(p.x * W + px * 0.3, p.y * H); ctx.rotate(p.rot);
+          ctx.beginPath(); ctx.ellipse(0, 0, p.sz, p.sz * 0.4, 0, 0, 6.28); ctx.fill(); ctx.restore();
+        }
+        // Wind lines
+        for (const w of wLines) {
+          w.x += w.sp * 0.00032 * wm; if (w.x > 1.2) { w.x = -0.1; w.y = rand(0, 1); }
+          ctx.strokeStyle = 'rgba(255,255,255,' + w.a + ')'; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(w.x * W + px * 0.3, w.y * H); ctx.lineTo(w.x * W + px * 0.3 + w.len, w.y * H); ctx.stroke();
+        }
+        // Dust motes
+        for (const d of dustM) {
+          d.x += d.vx * 0.0008; if (d.x < 0 || d.x > 1) d.vx *= -1;
+          ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.beginPath(); ctx.arc(d.x * W, d.y * H, d.sz, 0, 6.28); ctx.fill();
+        }
+        // Wind gust
+        if (pnow() > nxtWG && !wgActive) { wgActive = true; wgEnd = pnow() + 800; nxtWG = pnow() + rand(8000, 12000); }
+        if (wgActive && pnow() > wgEnd) wgActive = false;
+        // Ground mist
+        for (const m of mist) { const sc = 1 + 0.15 * Math.sin(t * 0.0005 + m.ph); ctx.fillStyle = 'rgba(255,255,255,' + m.a + ')'; ctx.beginPath(); ctx.ellipse(m.x * W, m.y * H, m.rx * sc, m.ry * sc, 0, 0, 6.28); ctx.fill(); }
+        // Floor
+        const fy = H * FLOOR_Y;
+        const fg = ctx.createLinearGradient(0, fy, 0, H); fg.addColorStop(0, 'rgba(30,20,15,0.6)'); fg.addColorStop(1, 'rgba(20,15,10,0.9)');
+        ctx.fillStyle = fg; ctx.fillRect(0, fy, W, H - fy);
+        ctx.strokeStyle = 'rgba(212,168,84,0.4)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, fy); ctx.lineTo(W, fy); ctx.stroke();
+      }
+
+      /* ─── LUFFY ─── */
+      function drawLuffy(t) {
+        const sc = isMobile ? 0.65 : 1.0;
+        const lx = W * (isMobile ? 0.10 : 0.18);
+        const by = H * FLOOR_Y + Math.sin(t * 0.00225) * 3;
+        const sw = Math.sin(t * 0.0018) * 4;
+        ctx.save(); ctx.translate(lx + sw, by); ctx.scale(sc, sc);
+        // Haki aura
+        ctx.save(); ctx.shadowBlur = 20; ctx.shadowColor = 'rgba(200,30,30,0.5)';
+        for (let i = 0; i < 8; i++) {
+          const ag = (t * 0.003 + i * 0.8) % 6.28, r = 50 + rand(-10, 10);
+          ctx.strokeStyle = 'rgba(220,40,40,' + (0.3 + Math.random() * 0.3) + ')'; ctx.lineWidth = 1.5;
+          ctx.beginPath(); let bx = Math.cos(ag) * r * 0.5, bby = -70 + Math.sin(ag) * r * 0.6; ctx.moveTo(bx, bby);
+          for (let j = 0; j < 3; j++) ctx.lineTo(bx + rand(-15, 15), bby + rand(-20, 20)); ctx.stroke();
+        } ctx.restore();
+        // Character sprite image
+        if (imgLuffy.complete) {
+          ctx.save();
+          ctx.shadowBlur = 15; ctx.shadowColor = 'rgba(255,255,255,0.25)';
+          ctx.drawImage(imgLuffy, -75, -150, 150, 150);
+          ctx.restore();
+        }
+        ctx.restore();
+        // Conqueror's Haki discharge every 6s
+        const hc = (t % 6000) / 6000;
+        if (hc > 0.85 && hc < 0.98) {
+          const hi = Math.sin((hc - 0.85) / 0.13 * Math.PI);
+          ctx.save(); ctx.translate(lx + sw, by); ctx.scale(sc, sc);
+          for (let i = 0; i < 4; i++) {
+            const ag = rand(0, 6.28), ln = rand(40, 60);
+            ctx.strokeStyle = 'rgba(50,0,50,' + (0.6 * hi) + ')'; ctx.lineWidth = 2;
+            ctx.beginPath(); let px2 = 0, py2 = -70; ctx.moveTo(0, -70);
+            for (let j = 0; j < 4; j++) { px2 += Math.cos(ag) * ln * 0.25 + rand(-8, 8); py2 += Math.sin(ag) * ln * 0.25 + rand(-8, 8); ctx.lineTo(px2, py2); }
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(255,255,255,' + (0.8 * hi) + ')'; ctx.beginPath(); ctx.arc(px2, py2, 2, 0, 6.28); ctx.fill();
+          } ctx.restore();
+        }
+      }
+
+      /* ─── ZORO ─── */
+      const zoro = { bx: isMobile ? 0.40 : 0.42, x: 0, state: 'IDLE', t0: 0, cb: null, ghosts: [], slashes: [], fin: false };
+      zoro.x = zoro.bx;
+
+      function drawZoroBody(t, ghost) {
+        if (!ghost) { ctx.save(); ctx.shadowBlur = 15 * (0.7 + 0.3 * Math.sin(t * 0.0035)); ctx.shadowColor = '#32C850'; }
+        // Character sprite image
+        if (imgZoro.complete) {
+          if (ghost) ctx.globalAlpha = 0.4;
+          ctx.drawImage(imgZoro, -65, -130, 130, 130);
+          if (ghost) ctx.globalAlpha = 1;
+        }
+        if (!ghost) ctx.restore();
+        // Asura flicker
+        if (!ghost) { const ac = (t % 10000) / 10000; if (ac > 0.85 && ac < 0.95) { const aa = 0.2 * Math.sin((ac - 0.85) / 0.1 * Math.PI); ctx.save(); ctx.globalAlpha = aa; ctx.translate(-20, 0); drawZoroBody(t, true); ctx.restore(); ctx.save(); ctx.globalAlpha = aa; ctx.translate(20, 0); drawZoroBody(t, true); ctx.restore(); } }
+      }
+
+      function drawZoro(t) {
+        const sc = isMobile ? 0.65 : 1.05;
+        const zx = zoro.x * W, by = H * FLOOR_Y + Math.sin(t * 0.0025) * 2;
+        // Ghost trail
+        for (let i = zoro.ghosts.length - 1; i >= 0; i--) {
+          const g = zoro.ghosts[i], age = pnow() - g.born;
+          if (age > 400) { zoro.ghosts.splice(i, 1); continue; }
+          ctx.save(); ctx.globalAlpha = 0.4 * (1 - age / 400); ctx.translate(g.x * W, H * FLOOR_Y); ctx.scale(sc * 0.95, sc * 0.95); drawZoroBody(t, true); ctx.restore();
+        }
+        ctx.save(); ctx.translate(zx, by); ctx.scale(sc, sc); drawZoroBody(t, false); ctx.restore();
+        // Slash trails
+        for (let i = zoro.slashes.length - 1; i >= 0; i--) {
+          const s = zoro.slashes[i], age = pnow() - s.born;
+          if (age > 500) { zoro.slashes.splice(i, 1); continue; }
+          ctx.strokeStyle = 'rgba(100,255,120,' + (0.9 * (1 - age / 500)) + ')'; ctx.lineWidth = 3;
+          ctx.beginPath(); ctx.moveTo(s.x1, s.y1); ctx.quadraticCurveTo(s.cx, s.cy, s.x2, s.y2); ctx.stroke();
+        }
+      }
+
+      /* ─── KAIDO ─── */
+      const kaido = { kb: 0, aS: 1, flk: false };
+      let nxtKP = pnow() + rand(15000, 20000);
+
+      function drawKaido(t) {
+        const sc = isMobile ? 1.43 : 2.2;
+        const kx = W * (isMobile ? 0.80 : 0.78), by = H * FLOOR_Y;
+        const bx2 = 1 + 0.02 * Math.sin(t * 0.0016);
+        ctx.save(); ctx.translate(kx + kaido.kb, by); ctx.scale(sc * bx2, sc);
+        // Aura
+        const aA = kaido.flk ? 0.05 + Math.random() * 0.15 : 0.12;
+        ctx.fillStyle = 'rgba(100,0,150,' + aA + ')'; ctx.beginPath(); ctx.ellipse(0, -70, 40 * kaido.aS, 60 * kaido.aS, 0, 0, 6.28); ctx.fill();
+        // Dark lightning
+        for (let i = 0; i < (isMobile ? 3 : 6); i++) {
+          if ((t + i * 100) % 80 < 20) continue;
+          const ag = rand(0, 6.28); ctx.strokeStyle = 'rgba(160,40,200,' + (0.4 + Math.random() * 0.3) + ')'; ctx.lineWidth = 1.5;
+          ctx.beginPath(); let bx3 = Math.cos(ag) * 20, by3 = -70 + Math.sin(ag) * 30; ctx.moveTo(bx3, by3);
+          for (let j = 0; j < 3; j++) { bx3 += Math.cos(ag) * 12 + rand(-6, 6); by3 += Math.sin(ag) * 12 + rand(-6, 6); ctx.lineTo(bx3, by3); } ctx.stroke();
+        }
+        // Character sprite image
+        if (imgKaido.complete) {
+          ctx.save();
+          ctx.shadowBlur = 20; ctx.shadowColor = 'rgba(220, 38, 38, 0.45)';
+          ctx.drawImage(imgKaido, -48, -100, 96, 96);
+          ctx.restore();
+        }
+        ctx.restore();
+        // Ground dust
+        if (Math.random() < 0.1) spawnP({ x: kx + kaido.kb + rand(-30, 30) * sc * 0.3, y: by - rand(0, 10), vx: rand(-0.3, 0.3), vy: -rand(0.5, 1.5), size: rand(1, 3), color: 'rgba(200,180,160,0.4)', baseAlpha: 0.4, life: 1500 });
+      }
+
+      /* ─── EFFECTS ─── */
+      const fx = { fA: 0, fC: 'rgba(255,255,255,0.35)', sparks: [], spdL: [], shockW: [], debris: [], cracks: [], fSlash: [] };
+
+      function drawFX(t) {
+        if (fx.fA > 0) { ctx.fillStyle = fx.fC.replace(/[\d.]+\)$/, fx.fA + ')'); ctx.fillRect(0, 0, W, H); fx.fA *= 0.9; if (fx.fA < 0.005) fx.fA = 0; }
+        for (let i = fx.sparks.length - 1; i >= 0; i--) { const s = fx.sparks[i]; const age = pnow() - s.born; if (age > 500) { fx.sparks.splice(i, 1); continue; } s.x += s.vx; s.y += s.vy; s.vy += 0.2; ctx.globalAlpha = 1 - age / 500; ctx.fillStyle = s.color; ctx.beginPath(); ctx.arc(s.x, s.y, s.sz, 0, 6.28); ctx.fill(); } ctx.globalAlpha = 1;
+        for (let i = fx.spdL.length - 1; i >= 0; i--) { const l = fx.spdL[i]; const age = pnow() - l.born; if (age > 300) { fx.spdL.splice(i, 1); continue; } ctx.strokeStyle = 'rgba(255,255,255,' + (0.6 * (1 - age / 300)) + ')'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(l.x, l.y); ctx.lineTo(l.x + l.dx, l.y + l.dy); ctx.stroke(); }
+        for (let i = fx.shockW.length - 1; i >= 0; i--) { const sw = fx.shockW[i]; const age = pnow() - sw.born; if (age > sw.life) { fx.shockW.splice(i, 1); continue; } const p2 = age / sw.life, r = sw.r0 + (sw.r1 - sw.r0) * p2; ctx.strokeStyle = 'rgba(' + sw.c + ',' + (sw.a * (1 - p2)) + ')'; ctx.lineWidth = sw.w * (1 - p2 * 0.5); ctx.beginPath(); ctx.arc(sw.x, sw.y, r, 0, 6.28); ctx.stroke(); }
+        for (let i = fx.debris.length - 1; i >= 0; i--) { const d = fx.debris[i]; const age = pnow() - d.born; if (age > 800) { fx.debris.splice(i, 1); continue; } d.x += d.vx; d.y += d.vy; d.vy += 0.3; d.rot += d.rs; ctx.save(); ctx.globalAlpha = 1 - age / 800; ctx.translate(d.x, d.y); ctx.rotate(d.rot); ctx.fillStyle = '#3a3025'; ctx.fillRect(-d.w * 0.5, -d.h * 0.5, d.w, d.h); ctx.restore(); }
+        for (let i = fx.cracks.length - 1; i >= 0; i--) { const c = fx.cracks[i]; const age = pnow() - c.born; if (age > 1200) { fx.cracks.splice(i, 1); continue; } ctx.strokeStyle = 'rgba(255,200,100,' + (0.6 * (1 - age / 1200)) + ')'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(c.pts[0].x, c.pts[0].y); for (let j = 1; j < c.pts.length; j++) ctx.lineTo(c.pts[j].x, c.pts[j].y); ctx.stroke(); }
+        for (let i = fx.fSlash.length - 1; i >= 0; i--) { const fs = fx.fSlash[i]; const age = pnow() - fs.born; if (age > 1500) { fx.fSlash.splice(i, 1); continue; } const sf = 1 + age / 1500; ctx.save(); ctx.globalAlpha = 0.95 * (1 - age / 1500); ctx.strokeStyle = 'rgba(100,255,120,0.95)'; ctx.lineWidth = 6 * (1 - age / 1500 * 0.5); ctx.translate(W * 0.5, H * 0.5); ctx.scale(sf, sf); ctx.translate(-W * 0.5, -H * 0.5); ctx.beginPath(); ctx.moveTo(fs.x1, fs.y1); ctx.lineTo(fs.x2, fs.y2); ctx.stroke(); ctx.restore(); }
+      }
+
+      /* ─── VIGNETTE ─── */
+      let vigA = 0;
+      function drawVig() { if (vigA <= 0) return; const g = ctx.createRadialGradient(W * 0.5, H * 0.5, W * 0.2, W * 0.5, H * 0.5, W * 0.7); g.addColorStop(0, 'transparent'); g.addColorStop(1, 'rgba(0,0,0,' + vigA + ')'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
+
+      /* ─── ATTACK SYSTEM ─── */
+      function triggerAttack(cb, fin) { if (zoro.state !== 'IDLE') return; zoro.state = 'CHARGING'; zoro.t0 = pnow(); zoro.cb = cb; zoro.fin = fin || false; if (fin) vigA = 0.4; }
+
+      function updateAttack(t) {
+        if (zoro.state === 'IDLE') return;
+        const el = pnow() - zoro.t0;
+        const kx2 = isMobile ? 0.80 : 0.78;
+        if (zoro.state === 'CHARGING') {
+          if (el < 200) { zoro.x = lerp(zoro.bx, zoro.bx - 0.02, el / 200); cam.zoom = lerp(1, 1.015, el / 200); }
+          else { zoro.state = 'DASHING'; zoro.t0 = pnow(); }
+        }
+        if (zoro.state === 'DASHING') {
+          const dd = 250;
+          if (el < dd) {
+            const p3 = el / dd, tx = zoro.fin ? 0.85 : 0.65;
+            zoro.x = lerp(zoro.bx - 0.02, tx, p3);
+            if (el % 40 < 16) zoro.ghosts.push({ x: zoro.x - 0.03, born: pnow() });
+            if (el % 20 < 16) for (let i = 0; i < 3; i++) { const ag = rand(0, 6.28); fx.spdL.push({ x: W * 0.5 + Math.cos(ag) * 30, y: H * 0.5 + Math.sin(ag) * 30, dx: Math.cos(ag) * rand(60, 100), dy: Math.sin(ag) * rand(60, 100), born: pnow() }); }
+          } else {
+            const ix = zoro.x * W, iy = H * FLOOR_Y - 60;
+            for (let i = 0; i < 3; i++) zoro.slashes.push({ x1: ix - rand(40, 80), y1: iy - rand(20, 60), cx: ix + rand(-20, 20), cy: iy + rand(-30, 30), x2: ix + rand(40, 80), y2: iy + rand(20, 60), born: pnow() });
+            zoro.state = 'IMPACT'; zoro.t0 = pnow();
+          }
+        }
+        if (zoro.state === 'IMPACT') {
+          if (el < 30) {
+            fx.fA = zoro.fin ? 0.7 : 0.35; fx.fC = zoro.fin ? 'rgba(255,255,255,0.7)' : 'rgba(200,255,200,0.35)';
+            shakeCamera(zoro.fin ? 8 : 4, zoro.fin ? 600 : 350);
+            const ix2 = kx2 * W, iy2 = H * FLOOR_Y - 80, sct = zoro.fin ? 60 : 25;
+            for (let i = 0; i < sct; i++) { const ag = rand(0, 6.28), sp = rand(3, zoro.fin ? 15 : 8); fx.sparks.push({ x: ix2, y: iy2, vx: Math.cos(ag) * sp, vy: Math.sin(ag) * sp - 2, sz: rand(2, 5), color: ['rgba(100,255,120,0.9)', 'rgba(200,150,255,0.9)', '#fff'][~~rand(0, 3)], born: pnow() }); }
+            kaido.kb = 0; kaido.flk = true;
+            fx.shockW.push({ x: ix2, y: iy2, r0: 20, r1: zoro.fin ? 400 : 100, a: 0.7, w: zoro.fin ? 8 : 4, c: '150,200,255', life: zoro.fin ? 800 : 600, born: pnow() });
+            for (let i = 0; i < (zoro.fin ? 8 : 5); i++) fx.debris.push({ x: ix2 + rand(-20, 20), y: iy2 + rand(-10, 30), vx: rand(-4, 4), vy: rand(-6, -1), w: rand(4, 10), h: rand(3, 7), rot: 0, rs: rand(-0.1, 0.1), born: pnow() });
+            if (zoro.fin) {
+              fx.fSlash.push({ x1: 0, y1: 0, x2: W, y2: H, born: pnow() }, { x1: 0, y1: H * 0.2, x2: W, y2: H * 0.8, born: pnow() }, { x1: W, y1: 0, x2: 0, y2: H, born: pnow() });
+              for (let i = 0; i < 5; i++) { const ag = rand(-0.5, 0.5) + (i - 2) * 0.4; const pts = [{ x: ix2, y: H * FLOOR_Y }]; for (let j = 1; j <= 5; j++) pts.push({ x: ix2 + Math.cos(ag) * j * 25 + rand(-5, 5), y: H * FLOOR_Y + Math.sin(ag) * j * 8 + rand(-3, 3) }); fx.cracks.push({ pts, born: pnow() }); }
+            }
+          }
+          kaido.kb = lerp(kaido.kb, zoro.fin ? 80 : 30, 0.1);
+          if (el > (zoro.fin ? 1500 : 650)) { zoro.state = 'RETURNING'; zoro.t0 = pnow(); if (zoro.cb) { zoro.cb(); zoro.cb = null; } }
+        }
+        if (zoro.state === 'RETURNING') {
+          const rd = zoro.fin ? 1500 : 1100;
+          if (el < rd) {
+            zoro.x = lerp(zoro.x, zoro.bx, 0.03); kaido.kb = lerp(kaido.kb, 0, 0.02); cam.zoom = lerp(cam.zoom, 1, 0.02); vigA = lerp(vigA, 0, 0.02);
+            if (el % 60 < 16 && el < 400) zoro.ghosts.push({ x: zoro.x + 0.02, born: pnow() });
+          } else { zoro.x = zoro.bx; zoro.state = 'IDLE'; kaido.kb = 0; kaido.flk = false; cam.zoom = 1; zoro.fin = false; vigA = 0; }
+        }
+      }
+
+      /* ─── MAIN LOOP ─── */
+      let lt = pnow();
+      function loop() {
+        const t = pnow(), dt = Math.min(t - lt, 50) / 16.67; lt = t;
+        ctx.clearRect(0, 0, W, H);
+        updateCamera(t); updateAttack(t); updateParticles(dt);
+        if (pnow() > nxtKP) { kaido.aS = 1.5; nxtKP = pnow() + rand(15000, 20000); }
+        kaido.aS = lerp(kaido.aS, 1, 0.01);
+        applyCam(); drawBG(t); drawLuffy(t); drawZoro(t); drawKaido(t); drawParticles(); drawFX(t); drawSprFlash(); drawVig(); restoreCam();
+        requestAnimationFrame(loop);
+      }
+
+      /* ─── NAV ATTACK WIRING ─── */
+      document.querySelectorAll('.nav-link, .mobile-link, .hero-btn-primary, .hero-btn-secondary').forEach(function (link) {
+        if (link.classList.contains('nav-center')) return;
+        link.addEventListener('click', function (e) {
+          const href = this.getAttribute('href');
+          if (!href || href.charAt(0) !== '#') return;
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (!target) return;
+          const isFin = href === '#contact';
+          const mm = document.getElementById('mobile-menu');
+          if (mm) mm.classList.remove('open');
+          triggerAttack(function () { setTimeout(function () { target.scrollIntoView({ behavior: 'smooth' }); }, 200); }, isFin);
+        });
+      });
+
+      /* ─── FINISHING MOVE ON CONTACT SCROLL ─── */
+      let finDone = false;
+      const cObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting && !finDone && zoro.state === 'IDLE') { finDone = true; triggerAttack(null, true); setTimeout(function () { finDone = false; }, 10000); } });
+      }, { threshold: 0.3 });
+      const cEl = document.getElementById('contact');
+      if (cEl) cObs.observe(cEl);
+
+      /* ─── DIALOGUE SYSTEM (Tab to continue) ─── */
+      const dlgSteps = [
+        { text: "A Yonko-class client appears on the shores of Wano..." },
         { text: "Kaido: You think your code can survive my Thunder Bagua?" },
-        { text: "Roronoa Karan steps forward. Three swords drawn.", showChar: true },
+        { text: "Roronoa Karan steps forward. Three swords drawn." },
         { text: "Karan: Nothing happened. But your vulnerabilities will." },
-        { text: "Karan used SANTORYU: ONI GIRI — EXPLOIT PIPELINE!", showArcane: true },
-        { text: "CONQUEROR'S HAKI unleashed! Critical hit!", showImpact: true },
+        { text: "Karan used SANTORYU: ONI GIRI \u2014 EXPLOIT PIPELINE!", attack: true },
+        { text: "CONQUEROR'S HAKI unleashed! Critical hit!", impact: true },
         { text: "Kaido defeated. The Wano code repository is secured.", bossDefeated: true },
-        { text: "Karan gained 5000 Belly. Bounty increased: ₿500,000,000!" }
+        { text: "Karan gained 5000 Belly. Bounty increased: \u20bf500,000,000!" }
       ];
-      let step = -1, typing = false;
-      const hint = document.getElementById('dialogue-hint'), box = document.getElementById('dialogue-box'), textEl = document.getElementById('dialogue-text'), caret = document.getElementById('dialogue-caret');
-      const boss = document.getElementById('sprite-boss'), char_ = document.getElementById('sprite-char'), arcane = document.getElementById('sprite-arcane'), impact = document.getElementById('sprite-impact'), weapon = document.getElementById('sprite-weapon');
-      function typeText(str, cb) { typing = true; textEl.textContent = ''; caret.classList.remove('show'); let i = 0; const iv = setInterval(() => { textEl.textContent += str[i]; i++; if (i >= str.length) { clearInterval(iv); typing = false; caret.classList.add('show'); if (cb) cb() } }, 30) }
-      function flashSprite(el, dur) { el.style.opacity = '1'; el.style.animation = 'flash ' + dur + 'ms ease-out forwards'; setTimeout(() => { el.style.opacity = '0'; el.style.animation = '' }, dur) }
-      function advance() {
-        if (typing) return; step++;
-        if (step >= steps.length) { step = -1; resetScene(); return }
-        const s = steps[step];
-        if (step === 0) { hint.classList.add('show'); box.classList.add('show') }
-        if (s.showChar) { char_.style.opacity = '1'; char_.style.left = '35%' }
-        if (s.showArcane) {
-          char_.style.opacity = '0'; // Hide Zoro because he is moving as the slash attack occurs
-          flashSprite(arcane, 600);
-          flashSprite(weapon, 500);
-        }
-        if (s.showImpact) {
-          char_.style.opacity = '1'; // Show Zoro again after the slash completes and impacts Kaido
-          flashSprite(impact, 500);
-          document.querySelector('.hero-section').style.animation = 'shake .3s ease';
-          setTimeout(() => document.querySelector('.hero-section').style.animation = '', 300)
-        }
-        if (s.bossDefeated) boss.classList.add('defeated');
-        typeText(s.text);
+      let dlgStep = -1, dlgTyping = false;
+      const dlgHint = document.getElementById('dialogue-hint');
+      const dlgBox = document.getElementById('dialogue-box');
+      const dlgText = document.getElementById('dialogue-text');
+      const dlgCaret = document.getElementById('dialogue-caret');
+
+      function dlgTypeText(str, cb) {
+        dlgTyping = true; dlgText.textContent = ''; dlgCaret.classList.remove('show');
+        let i = 0;
+        const iv = setInterval(function () {
+          dlgText.textContent += str[i]; i++;
+          if (i >= str.length) { clearInterval(iv); dlgTyping = false; dlgCaret.classList.add('show'); if (cb) cb(); }
+        }, 30);
       }
-      function resetScene() { hint.classList.remove('show'); box.classList.remove('show'); textEl.textContent = ''; caret.classList.remove('show'); boss.classList.remove('defeated'); char_.style.opacity = '0'; char_.style.left = '25%' }
-      const heroObs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting && step === -1) setTimeout(() => hint.classList.add('show'), 1500) }) }, { threshold: 0.3 });
-      heroObs.observe(document.getElementById('hero'));
-      document.addEventListener('keydown', e => { if (e.key === 'Tab') { e.preventDefault(); advance() } });
-      document.querySelector('.game-scene').addEventListener('click', advance);
+
+      function dlgAdvance() {
+        if (dlgTyping) return;
+        dlgStep++;
+        if (dlgStep >= dlgSteps.length) { dlgStep = -1; dlgReset(); return; }
+        const s = dlgSteps[dlgStep];
+        if (dlgStep === 0) { dlgHint.classList.add('show'); dlgBox.classList.add('show'); }
+        if (s.attack) {
+          // Trigger Zoro attack + flash arcane/weapon effects
+          triggerAttack(null, false);
+          const kx2 = (isMobile ? 0.80 : 0.78) * W, iy2 = H * FLOOR_Y - 80;
+          flashSprite(imgArcane, kx2 - 90, iy2 - 60, 180, 180, 600);
+          flashSprite(imgSlash, zoro.x * W - 40, H * FLOOR_Y - 100, 180, 180, 500);
+        }
+        if (s.impact) {
+          // Extra shake + flash impact image
+          shakeCamera(6, 400);
+          fx.fA = 0.4; fx.fC = 'rgba(200,255,200,0.4)';
+          const kx3 = (isMobile ? 0.80 : 0.78) * W, iy3 = H * FLOOR_Y - 80;
+          flashSprite(imgImpact, kx3 - 90, iy3 - 60, 180, 180, 500);
+          // Spawn extra impact sparks
+          for (let i = 0; i < 20; i++) { const ag = rand(0, 6.28), sp = rand(3, 8); fx.sparks.push({ x: kx3, y: iy3, vx: Math.cos(ag) * sp, vy: Math.sin(ag) * sp - 2, sz: rand(2, 5), color: ['rgba(100,255,120,0.9)', 'rgba(200,150,255,0.9)', '#fff'][~~rand(0, 3)], born: pnow() }); }
+        }
+        if (s.bossDefeated) {
+          // Trigger finisher attack
+          triggerAttack(null, true);
+        }
+        dlgTypeText(s.text);
+      }
+
+      function dlgReset() {
+        dlgHint.classList.remove('show'); dlgBox.classList.remove('show');
+        dlgText.textContent = ''; dlgCaret.classList.remove('show');
+      }
+
+      // Tab key and hero click to advance
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Tab') { e.preventDefault(); dlgAdvance(); }
+      });
+      var heroEl = document.getElementById('hero');
+      if (heroEl) heroEl.addEventListener('click', function (e) {
+        // Don't trigger on button/link clicks
+        if (e.target.closest('a, button')) return;
+        dlgAdvance();
+      });
+      // Show hint after 1.5s
+      var heroObs2 = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting && dlgStep === -1) setTimeout(function () { dlgHint.classList.add('show'); }, 1500); });
+      }, { threshold: 0.3 });
+      heroObs2.observe(heroEl);
+      // Mobile touch hint
       if ('ontouchstart' in window) {
-        const mobileHint = document.querySelector('.dialogue-hint .mobile-only');
-        const desktopHint = document.querySelector('.dialogue-hint .desktop-only');
-        if (mobileHint) mobileHint.style.display = 'inline';
-        if (desktopHint) desktopHint.style.display = 'none';
+        var mHint = document.querySelector('.dialogue-hint .mobile-only');
+        var dHint = document.querySelector('.dialogue-hint .desktop-only');
+        if (mHint) mHint.style.display = 'inline';
+        if (dHint) dHint.style.display = 'none';
       }
+
+      loop();
     })();
 
     /* ═══════════════════════════════════════════════════════
@@ -4061,13 +4401,13 @@
       if (e.key === 'q' || e.key === 'Q') window.open('https://tryhackme.com/p/zororj', '_blank');
       if (e.key === 'e' || e.key === 'E') window.open('https://app.hackthebox.com', '_blank');
       if (e.key === 'f' || e.key === 'F') { e.preventDefault(); window.open('https://leetcode.com/u/zoro_rj/', '_blank') }
-      if (e.key === 'r' || e.key === 'R') refreshAllStats();
+      if (e.key === 'r' || e.key === 'R') refreshAllStats(true);
     });
 
     /* ═══════════════════════════════════════════════════════
        REFRESH BUTTON CLICK
        ═══════════════════════════════════════════════════════ */
-    document.getElementById('refresh-btn').addEventListener('click', () => refreshAllStats());
+    document.getElementById('refresh-btn').addEventListener('click', () => refreshAllStats(true));
 
     /* ═══════════════════════════════════════════════════════
        MOBILE: hide keyboard shortcuts
