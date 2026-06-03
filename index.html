@@ -3520,22 +3520,9 @@
         const cached = Cache.get('leetcode');
         if (cached) return cached;
       }
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          messages: [{
-            role: "user",
-            content: `Fetch https://leetcode-stats-api.herokuapp.com/zoro_rj and return ONLY a JSON object with these exact keys: totalSolved, easySolved, mediumSolved, hardSolved, totalEasy, totalMedium, totalHard, ranking. No extra text, no markdown, just the JSON object.`
-          }]
-        })
-      });
-      const result = await response.json();
-      const text = result.content?.find(b => b.type === 'text')?.text || '{}';
-      const clean = text.replace(/```json|```/g, '').trim();
-      const data = JSON.parse(clean);
+      const r = await fetch('https://stats-proxy.vercel.app/api/stats?platform=leetcode');
+      if (!r.ok) throw new Error(`LC ${r.status}`);
+      const data = await r.json();
       Cache.set('leetcode', data);
       return data;
     }
@@ -3546,54 +3533,24 @@
         const cached = Cache.get('tryhackme');
         if (cached) return cached;
       }
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          tools: [{ type: "web_search_20250305", name: "web_search" }],
-          messages: [{
-            role: "user",
-            content: `Search for TryHackMe public profile stats for username "zororj". Return ONLY a JSON object with keys: rooms (number), streak (number), badges (number), rank (string like "5%"), points (number), level (string), leagueTier (string), globalRank (number). Use realistic estimates if exact data unavailable. No markdown, just JSON.`
-          }]
-        })
-      });
-      const result = await response.json();
-      const text = result.content?.find(b => b.type === 'text')?.text || '{}';
-      const clean = text.replace(/```json|```/g, '').trim();
-      const data = JSON.parse(clean);
+      const r = await fetch('https://stats-proxy.vercel.app/api/stats?platform=tryhackme');
+      if (!r.ok) throw new Error(`THM ${r.status}`);
+      const data = await r.json();
       Cache.set('tryhackme', data);
       return data;
     }
-
     // ─── HACK THE BOX (multiple API endpoints + CORS proxies + scrape fallback) ───
     async function fetchHackTheBox(forceRefresh = false) {
       if (!forceRefresh) {
         const cached = Cache.get('hackthebox');
         if (cached) return cached;
       }
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          tools: [{ type: "web_search_20250305", name: "web_search" }],
-          messages: [{
-            role: "user",
-            content: `Search for HackTheBox profile stats for user "zoro06rj" (user ID 3175444) at https://app.hackthebox.com/users/3175444. Return ONLY a JSON object with keys: level (number), seasonRank (string like "#3341"), points (number), flags (string like "2/24"), tier (string). No markdown, just JSON.`
-          }]
-        })
-      });
-      const result = await response.json();
-      const text = result.content?.find(b => b.type === 'text')?.text || '{}';
-      const clean = text.replace(/```json|```/g, '').trim();
-      const data = JSON.parse(clean);
+      const r = await fetch('https://stats-proxy.vercel.app/api/stats?platform=hackthebox');
+      if (!r.ok) throw new Error(`HTB ${r.status}`);
+      const data = await r.json();
       Cache.set('hackthebox', data);
       return data;
     }
-
     /* ═══════════════════════════════════════════════════════
        UI UPDATE FUNCTIONS
        ═══════════════════════════════════════════════════════ */
