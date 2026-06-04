@@ -629,6 +629,72 @@
       display: inline
     }
 
+    /* ═══ PRESS TAB INDICATOR ═══ */
+    .tab-hint-badge {
+      position: absolute;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 22px;
+      background: rgba(15, 15, 20, 0.85);
+      border: 1px solid rgba(100, 255, 120, 0.3);
+      backdrop-filter: blur(6px);
+      animation: tabHintPulse 2.5s ease-in-out infinite, tabHintFadeIn 1s 2s forwards;
+      opacity: 0;
+      pointer-events: none
+    }
+
+    .tab-hint-badge .tab-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 12px;
+      border: 1.5px solid rgba(100, 255, 120, 0.6);
+      border-radius: 4px;
+      background: rgba(100, 255, 120, 0.08);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(100, 255, 120, 0.9);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      line-height: 1
+    }
+
+    .tab-hint-badge .tab-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.55);
+      letter-spacing: 0.04em
+    }
+
+    .tab-hint-badge.activated {
+      border-color: rgba(100, 255, 120, 0.7);
+      animation: tabHintFlash 0.4s ease-out
+    }
+
+    @keyframes tabHintFadeIn {
+      to { opacity: 1 }
+    }
+
+    @keyframes tabHintPulse {
+      0%, 100% { border-color: rgba(100, 255, 120, 0.2); box-shadow: 0 0 8px rgba(100, 255, 120, 0.05) }
+      50% { border-color: rgba(100, 255, 120, 0.5); box-shadow: 0 0 18px rgba(100, 255, 120, 0.15) }
+    }
+
+    @keyframes tabHintFlash {
+      0% { background: rgba(100, 255, 120, 0.25); transform: translateX(-50%) scale(1.05) }
+      100% { background: rgba(15, 15, 20, 0.85); transform: translateX(-50%) scale(1) }
+    }
+
+    @media(max-width:768px) {
+      .tab-hint-badge { display: none }
+    }
+
     @media(min-width:640px) {
       .dialogue-text {
         font-size: 14px
@@ -2758,6 +2824,11 @@
         <span class="dialogue-cursor" id="dialogue-caret">▶</span>
       </div>
     </div>
+    <!-- Press Tab visual indicator -->
+    <div class="tab-hint-badge" id="tab-hint-badge">
+      <span class="tab-key">Tab</span>
+      <span class="tab-label">Press to start the story</span>
+    </div>
     <div class="hero-overlay">
       <h1 class="hero-name">Karan RJ</h1>
       <p class="hero-role">Security Researcher &amp; Full-Stack Developer</p>
@@ -4223,7 +4294,9 @@
           const isFin = href === '#contact';
           const mm = document.getElementById('mobile-menu');
           if (mm) mm.classList.remove('open');
-          triggerAttack(function () { setTimeout(function () { target.scrollIntoView({ behavior: 'smooth' }); }, 200); }, isFin);
+          // Always scroll to the target section — attack animation is optional eye-candy
+          triggerAttack(null, isFin);
+          setTimeout(function () { target.scrollIntoView({ behavior: 'smooth' }); }, 300);
         });
       });
 
@@ -4295,27 +4368,41 @@
         dlgText.textContent = ''; dlgCaret.classList.remove('show');
       }
 
-      // Tab key and hero click to advance
+      // Tab key ONLY to advance dialogue (no click)
+      var tabHintBadge = document.getElementById('tab-hint-badge');
       document.addEventListener('keydown', function (e) {
-        if (e.key === 'Tab') { e.preventDefault(); dlgAdvance(); }
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          dlgAdvance();
+          // Flash the tab hint badge on press
+          if (tabHintBadge) {
+            tabHintBadge.classList.remove('activated');
+            void tabHintBadge.offsetWidth;
+            tabHintBadge.classList.add('activated');
+            // Update label text after first press
+            var lbl = tabHintBadge.querySelector('.tab-label');
+            if (lbl && dlgStep >= 0 && dlgStep < dlgSteps.length - 1) lbl.textContent = 'Press to continue';
+            else if (lbl && dlgStep >= dlgSteps.length - 1) lbl.textContent = 'Story complete!';
+          }
+        }
       });
       var heroEl = document.getElementById('hero');
-      if (heroEl) heroEl.addEventListener('click', function (e) {
-        // Don't trigger on button/link clicks
-        if (e.target.closest('a, button')) return;
-        dlgAdvance();
-      });
       // Show hint after 1.5s
       var heroObs2 = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) { if (e.isIntersecting && dlgStep === -1) setTimeout(function () { dlgHint.classList.add('show'); }, 1500); });
       }, { threshold: 0.3 });
       heroObs2.observe(heroEl);
-      // Mobile touch hint
+      // Mobile: use tap instead of Tab key
       if ('ontouchstart' in window) {
         var mHint = document.querySelector('.dialogue-hint .mobile-only');
         var dHint = document.querySelector('.dialogue-hint .desktop-only');
         if (mHint) mHint.style.display = 'inline';
         if (dHint) dHint.style.display = 'none';
+        // On mobile, allow tapping the hero to advance (since no Tab key)
+        if (heroEl) heroEl.addEventListener('click', function (e) {
+          if (e.target.closest('a, button')) return;
+          dlgAdvance();
+        });
       }
 
       loop();
