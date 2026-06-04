@@ -221,9 +221,9 @@
 
     /* ═══ NAVIGATION ═══ */
     #navbar {
-      position: fixed;
+      position: absolute;
       top: 24px;
-      z-index: 10;
+      z-index: 100;
       width: 100%;
       padding: 0 16px
     }
@@ -321,19 +321,43 @@
     }
 
     .nav-link {
-      font-size: .875rem
+      font-size: .875rem;
+      cursor: pointer !important;
+      transition: color 0.3s ease, opacity 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--kaido-crimson) !important;
+      opacity: 0.85;
     }
 
     .nav-center {
       font-family: var(--font-accent);
       font-size: 1.5rem;
-      display: block
+      display: block;
+      cursor: pointer !important;
+      transition: color 0.3s ease, opacity 0.3s ease;
     }
 
     @media(min-width:640px) {
       .nav-center {
         font-size: 1.875rem
       }
+    }
+
+    .nav-center:hover {
+      color: var(--kaido-crimson) !important;
+      opacity: 0.85;
+    }
+
+    #hamburger-btn {
+      cursor: pointer !important;
+      transition: color 0.3s ease, opacity 0.3s ease;
+    }
+
+    #hamburger-btn:hover {
+      color: var(--kaido-crimson) !important;
+      opacity: 0.85;
     }
 
     .nav-desktop {
@@ -362,7 +386,7 @@
     #mobile-menu {
       position: fixed;
       inset: 0;
-      z-index: 9;
+      z-index: 99;
       background: rgba(15, 15, 15, .97);
       display: flex;
       flex-direction: column;
@@ -384,7 +408,13 @@
       font-size: 1.5rem;
       color: var(--void-100);
       text-transform: uppercase;
-      letter-spacing: .1em
+      letter-spacing: .1em;
+      cursor: pointer !important;
+      transition: color 0.3s ease;
+    }
+
+    #mobile-menu a:hover {
+      color: var(--wano-gold) !important;
     }
 
     /* ═══ SKEW BUTTON ═══ */
@@ -678,21 +708,41 @@
     }
 
     @keyframes tabHintFadeIn {
-      to { opacity: 1 }
+      to {
+        opacity: 1
+      }
     }
 
     @keyframes tabHintPulse {
-      0%, 100% { border-color: rgba(100, 255, 120, 0.2); box-shadow: 0 0 8px rgba(100, 255, 120, 0.05) }
-      50% { border-color: rgba(100, 255, 120, 0.5); box-shadow: 0 0 18px rgba(100, 255, 120, 0.15) }
+
+      0%,
+      100% {
+        border-color: rgba(100, 255, 120, 0.2);
+        box-shadow: 0 0 8px rgba(100, 255, 120, 0.05)
+      }
+
+      50% {
+        border-color: rgba(100, 255, 120, 0.5);
+        box-shadow: 0 0 18px rgba(100, 255, 120, 0.15)
+      }
     }
 
     @keyframes tabHintFlash {
-      0% { background: rgba(100, 255, 120, 0.25); transform: translateX(-50%) scale(1.05) }
-      100% { background: rgba(15, 15, 20, 0.85); transform: translateX(-50%) scale(1) }
+      0% {
+        background: rgba(100, 255, 120, 0.25);
+        transform: translateX(-50%) scale(1.05)
+      }
+
+      100% {
+        background: rgba(15, 15, 20, 0.85);
+        transform: translateX(-50%) scale(1)
+      }
     }
 
     @media(max-width:768px) {
-      .tab-hint-badge { display: none }
+      .tab-hint-badge {
+        display: none
+      }
     }
 
     @media(min-width:640px) {
@@ -2816,7 +2866,7 @@
     <canvas id="battleCanvas"></canvas>
     <div class="dialogue-wrap">
       <p class="dialogue-hint" id="dialogue-hint">
-        <span class="desktop-only">Press tab to continue</span>
+        <span class="desktop-only"></span>
         <span class="mobile-only" style="display:none">Tap to continue</span>
       </p>
       <div class="dialogue-box" id="dialogue-box">
@@ -4283,8 +4333,7 @@
       }
 
       /* ─── NAV ATTACK WIRING ─── */
-      document.querySelectorAll('.nav-link, .mobile-link, .hero-btn-primary, .hero-btn-secondary').forEach(function (link) {
-        if (link.classList.contains('nav-center')) return;
+      document.querySelectorAll('.nav-link, .nav-center, .mobile-link, .hero-btn-primary, .hero-btn-secondary').forEach(function (link) {
         link.addEventListener('click', function (e) {
           const href = this.getAttribute('href');
           if (!href || href.charAt(0) !== '#') return;
@@ -4294,9 +4343,15 @@
           const isFin = href === '#contact';
           const mm = document.getElementById('mobile-menu');
           if (mm) mm.classList.remove('open');
-          // Always scroll to the target section — attack animation is optional eye-candy
-          triggerAttack(null, isFin);
-          setTimeout(function () { target.scrollIntoView({ behavior: 'smooth' }); }, 300);
+          
+          if (link.classList.contains('nav-center')) {
+            // Logo click: scroll to top without triggering Zoro attack animation
+            target.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            // Regular links: trigger attack animation and scroll
+            triggerAttack(null, isFin);
+            setTimeout(function () { target.scrollIntoView({ behavior: 'smooth' }); }, 300);
+          }
         });
       });
 
