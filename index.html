@@ -2763,6 +2763,263 @@
       box-shadow: 0 0 25px rgba(212, 168, 84, 0.35) !important;
       transform: translateY(-4px);
     }
+
+    /* ═══════════════════════════════════════════════════════
+       CYBER DETAILED CARD REDESIGN, RADAR, & VIGNETTE STYLES
+       ═══════════════════════════════════════════════════════ */
+    
+    /* Conic Radar Scanner Sweep Effect */
+    .radar-container {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .radar-container::after {
+      content: '';
+      position: absolute;
+      inset: -50%;
+      background: conic-gradient(from 0deg, rgba(34, 197, 94, 0.08) 0deg, rgba(34, 197, 94, 0.02) 90deg, transparent 180deg, transparent 360deg);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: radar-sweep 6s linear infinite;
+      z-index: 1;
+    }
+    
+    @keyframes radar-sweep {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Scanlines and CRT Flicker */
+    .scanlines {
+      position: relative;
+      overflow: hidden;
+    }
+    .scanlines::before {
+      content: " ";
+      display: block;
+      position: absolute;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.015), rgba(0, 0, 255, 0.04));
+      z-index: 2;
+      background-size: 100% 3px, 3px 100%;
+      pointer-events: none;
+    }
+
+    /* Cyber Card Container */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+      width: 100%;
+    }
+
+    .cyber-card {
+      background: rgba(15, 15, 20, 0.85);
+      border: 1px solid var(--void-600);
+      border-radius: 6px;
+      padding: 24px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 290px;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+      overflow: hidden;
+    }
+
+    .cyber-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--zoro-green), transparent);
+      opacity: 0.5;
+      transition: all 0.3s;
+    }
+
+    /* Status specific top glow lines */
+    .cyber-card.success::before { background: linear-gradient(90deg, transparent, var(--zoro-green), transparent); }
+    .cyber-card.active::before { background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); }
+    .cyber-card.experimental::before { background: linear-gradient(90deg, transparent, var(--accent-purple), transparent); }
+
+    .cyber-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--zoro-green);
+      box-shadow: 0 8px 30px rgba(34, 197, 94, 0.25);
+    }
+
+    .cyber-card.success:hover {
+      border-color: var(--zoro-green);
+      box-shadow: 0 8px 30px rgba(34, 197, 94, 0.25);
+    }
+
+    .cyber-card.active:hover {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 8px 30px rgba(6, 182, 212, 0.25);
+    }
+
+    .cyber-card.experimental:hover {
+      border-color: var(--accent-purple);
+      box-shadow: 0 8px 30px rgba(168, 85, 247, 0.25);
+    }
+
+    .cyber-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 8px;
+    }
+
+    .cyber-card-meta {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--void-400);
+      font-weight: 600;
+    }
+
+    .cyber-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 3px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .cyber-badge.success { background: rgba(34, 197, 94, 0.15); color: var(--zoro-green); }
+    .cyber-badge.active { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+    .cyber-badge.experimental { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
+
+    .cyber-card-title {
+      font-family: var(--font-heading);
+      color: var(--void-100);
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .cyber-card-body {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--void-300);
+      margin-bottom: 16px;
+      flex: 1;
+    }
+
+    .cyber-target, .cyber-result {
+      margin-bottom: 8px;
+    }
+
+    .cyber-label {
+      color: var(--void-500);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-right: 4px;
+    }
+
+    .cyber-target-val {
+      color: var(--void-200);
+    }
+
+    .cyber-result-val {
+      color: var(--void-300);
+    }
+
+    .cyber-tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 12px;
+    }
+
+    .cyber-tech-tag {
+      font-size: 9px;
+      background: var(--void-700);
+      color: var(--void-400);
+      border: 1px solid var(--void-600);
+      padding: 2px 6px;
+      border-radius: 2px;
+    }
+
+    .cyber-card-footer {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .cyber-btn-small {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 12px;
+      font-size: 10px;
+      border-radius: 4px;
+      border: 1px solid var(--void-500);
+      background: transparent;
+      color: var(--void-200);
+      font-family: var(--font-mono);
+      font-weight: 600;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .cyber-btn-small:hover {
+      background: var(--void-100);
+      color: var(--void-800);
+      border-color: var(--void-100);
+    }
+
+    .cyber-btn-small.primary {
+      border-color: var(--zoro-green);
+      color: var(--zoro-green);
+    }
+
+    .cyber-btn-small.primary:hover {
+      background: var(--zoro-green);
+      color: var(--void-800);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+    }
+
+    /* Terminal Loading Skeleton Shimmer */
+    .cyber-skeleton-card {
+      background: rgba(15, 15, 20, 0.5);
+      border: 1px dashed var(--void-600);
+      height: 290px;
+      border-radius: 6px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .shimmer {
+      background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.02) 75%);
+      background-size: 200% 100%;
+      animation: shimmer-anim 1.5s infinite;
+    }
+
+    @keyframes shimmer-anim {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Screen shake animation for battle impact */
+    .screen-shake-anim {
+      animation: canvasShake 0.4s ease-out;
+    }
   </style>
 </head>
 
@@ -3256,112 +3513,103 @@
     </div>
   </section>
 
-  <!-- MISSIONS -->
-  <section id="missions">
+  <!-- MISSIONS / PROJECT ARSENAL -->
+  <section id="missions" class="radar-container scanlines">
     <div style="margin-bottom:40px">
       <div class="section-label" style="justify-content:space-between">
-        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px"><span>New
-            World</span><span>—</span><span>Missions</span></div>
-        <span class="reveal-fade"
-          style="color:var(--void-400);font-family:var(--font-mono);font-size:12px;letter-spacing:.1em">◈ Active
-          bounties: 4</span>
+        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px"><span>New World</span><span>—</span><span>Active Missions</span></div>
+        <span class="reveal-fade" style="color:var(--void-400);font-family:var(--font-mono);font-size:12px;letter-spacing:.1em" id="active-bounties-count">◈ Active Missions: 2</span>
       </div>
       <div class="section-head-row" style="display:flex;flex-direction:column;gap:8px">
-        <h2 class="section-title reveal-fade">Latest<br />Bounty.</h2>
-        <p class="section-accent reveal-fade">"Hunting high-value digital targets. Read the bounty posters."</p>
+        <h2 class="section-title reveal-fade">Project<br />Arsenal.</h2>
+        <p class="section-accent reveal-fade">"Reviewing classified security operations. Target execution logs loaded."</p>
       </div>
     </div>
-    <!-- RUZZ -->
-    <div class="mission-card reveal">
-      <div class="mission-bar">
-        <div style="display:flex;align-items:center;gap:16px">
-          <div class="mission-badge"><span>Live</span></div><span class="mission-type">Security Tool</span>
-        </div><span class="mission-year">2025</span>
-      </div>
-      <div class="mission-body">
-        <div class="mission-main">
-          <div class="mission-img-wrap">
-            <div
-              style="width:100%;height:100%;background:var(--void-700);display:flex;align-items:center;justify-content:center">
-              <span style="font-family:var(--font-accent);color:var(--void-500);font-size:3rem">RUZZ</span>
-            </div>
+
+    <!-- Active Core Missions Grid -->
+    <div class="projects-grid reveal">
+      <!-- MISSION #01: RUZZ -->
+      <div class="cyber-card success">
+        <div>
+          <div class="cyber-card-header">
+            <span class="cyber-card-meta">MISSION #01</span>
+            <span class="cyber-badge success">SUCCESS</span>
           </div>
-          <div class="mission-info"><span class="mission-codename">Codename</span>
-            <h3 class="mission-name">RUZZ</h3>
-            <p class="mission-desc">An interactive CLI tool engineered for cybersecurity learners, pentesters, and CTF
-              players. RUZZ generates precise fuzzing commands for web enumeration — transforming complex attack syntax
-              into guided, intelligent workflows.</p>
+          <h3 class="cyber-card-title">RUZZ</h3>
+          <div class="cyber-card-body">
+            <div class="cyber-target">
+              <span class="cyber-label">TARGET:</span>
+              <span class="cyber-target-val">Web Enumeration Automation</span>
+            </div>
+            <div class="cyber-result">
+              <span class="cyber-label">RESULT:</span>
+              <span class="cyber-result-val">Interactive CLI tool engineered for web fuzzing. Generates precise attack commands, transforming complex syntax into guided workflows.</span>
+            </div>
           </div>
         </div>
-        <div class="mission-sidebar">
-          <div>
-            <div style="margin-bottom:24px"><span class="mission-role-label">─── Role ───</span><span
-                class="mission-role-val">Creator & Developer</span></div>
-            <div><span class="mission-tech-label">─── Tech Stack ───</span>
-              <ul class="mission-tech-list">
-                <li class="mission-tech-item"><span class="mission-tech-bullet">▸</span><span
-                    class="mission-tech-name">Python3</span></li>
-                <li class="mission-tech-item"><span class="mission-tech-bullet">▸</span><span
-                    class="mission-tech-name">CLI</span></li>
-                <li class="mission-tech-item"><span class="mission-tech-bullet">▸</span><span
-                    class="mission-tech-name">Automation</span></li>
-                <li class="mission-tech-item"><span class="mission-tech-bullet">▸</span><span
-                    class="mission-tech-name">Web Pentest</span></li>
-              </ul>
-            </div>
+        <div>
+          <div class="cyber-tech-tags">
+            <span class="cyber-tech-tag">Python3</span>
+            <span class="cyber-tech-tag">CLI Automation</span>
+            <span class="cyber-tech-tag">Pentesting</span>
           </div>
-          <div class="mission-cta-wrap"><a class="btn-skew" href="https://github.com/rj-karan/RUZZ" target="_blank"
-              rel="noopener noreferrer"><span>View on GitHub</span></a></div>
-        </div>
-      </div>
-    </div>
-    <!-- NARCOX -->
-    <div class="mission-card reveal">
-      <div class="mission-bar">
-        <div style="display:flex;align-items:center;gap:16px">
-          <div class="mission-badge"><span>Live</span></div><span class="mission-type">Full-Stack</span>
-        </div><span class="mission-year">2025</span>
-      </div>
-      <div class="mission-body">
-        <div class="mission-main">
-          <div class="mission-img-wrap">
-            <div
-              style="width:100%;height:100%;background:var(--void-700);display:flex;align-items:center;justify-content:center">
-              <span style="font-family:var(--font-accent);color:var(--void-500);font-size:3rem">NARCOX</span>
-            </div>
-          </div>
-          <div class="mission-info"><span class="mission-codename">Codename</span>
-            <h3 class="mission-name">NARCOX</h3>
-            <p class="mission-desc">Automated drug trafficking detection system powered by the Telegram API. Monitors
-              channels in real-time, uses NLP-based keyword analysis to flag suspicious activity, logs threat metadata
-              to MySQL, and generates intelligence reports via a FastAPI dashboard.</p>
+          <div class="cyber-card-footer">
+            <a href="https://github.com/rj-karan/RUZZ" target="_blank" rel="noopener noreferrer" class="cyber-btn-small primary">Archive Link</a>
           </div>
         </div>
-        <div class="mission-sidebar">
-          <div>
-            <div style="margin-bottom:24px"><span class="mission-role-label">─── Role ───</span><span
-                class="mission-role-val">Creator & Full-Stack Developer</span></div>
-            <div><span class="mission-tech-label">─── Tech Stack ───</span>
-              <ul class="mission-tech-list">
-                <li class="mission-tech-item"><span class="mission-tech-bullet">▸</span><span
-                    class="mission-tech-name">Python3</span></li>
-                <li class="mission-tech-item"><span class="mission-tech-bullet">▸</span><span
-                    class="mission-tech-name">FastAPI</span></li>
-                <li class="mission-tech-item"><span class="mission-tech-bullet">▸</span><span
-                    class="mission-tech-name">Telegram Bot API</span></li>
-                <li class="mission-tech-item"><span class="mission-tech-bullet">▸</span><span
-                    class="mission-tech-name">MySQL</span></li>
-                <li class="mission-tech-item"><span class="mission-tech-bullet">▸</span><span
-                    class="mission-tech-name">React</span></li>
-              </ul>
+      </div>
+
+      <!-- MISSION #02: NARCOX -->
+      <div class="cyber-card success">
+        <div>
+          <div class="cyber-card-header">
+            <span class="cyber-card-meta">MISSION #02</span>
+            <span class="cyber-badge success">SUCCESS</span>
+          </div>
+          <h3 class="cyber-card-title">NARCOX</h3>
+          <div class="cyber-card-body">
+            <div class="cyber-target">
+              <span class="cyber-label">TARGET:</span>
+              <span class="cyber-target-val">Telegram Intel Gathering Dashboard</span>
+            </div>
+            <div class="cyber-result">
+              <span class="cyber-label">RESULT:</span>
+              <span class="cyber-result-val">Automated drug trafficking detection system powered by Telegram API. Monitors channels, flags indicator patterns using NLP, and logs intelligence.</span>
             </div>
           </div>
-          <div class="mission-cta-wrap"><a class="btn-skew" href="https://github.com/rj-karan/narcox" target="_blank"
-              rel="noopener noreferrer"><span>View on GitHub</span></a></div>
+        </div>
+        <div>
+          <div class="cyber-tech-tags">
+            <span class="cyber-tech-tag">FastAPI</span>
+            <span class="cyber-tech-tag">React</span>
+            <span class="cyber-tech-tag">MySQL</span>
+            <span class="cyber-tech-tag">Telegram API</span>
+          </div>
+          <div class="cyber-card-footer">
+            <a href="https://github.com/rj-karan/narcox" target="_blank" rel="noopener noreferrer" class="cyber-btn-small primary">Archive Link</a>
+          </div>
         </div>
       </div>
     </div>
-    <div class="mission-footer"><span>More projects incoming — check back soon</span><span>◈ ◈ ◈</span></div>
+
+    <!-- Dynamic Mission Archive (GitHub Integration) -->
+    <div style="margin-top:80px; margin-bottom:40px">
+      <div class="section-label" style="justify-content:space-between">
+        <div class="reveal-fade" style="display:flex;align-items:center;gap:12px"><span>Grand Line</span><span>—</span><span>Mission Archive</span></div>
+        <span class="reveal-fade" style="color:var(--void-400);font-family:var(--font-mono);font-size:12px;letter-spacing:.1em">◈ Dynamic Intel Feed</span>
+      </div>
+      <div class="section-head-row" style="display:flex;flex-direction:column;gap:8px">
+        <h2 class="section-title reveal-fade" style="font-size: 2rem;">Mission<br />Archive.</h2>
+        <p class="section-accent reveal-fade" style="font-size: 1rem;">"Synchronizing remote repository archives. Automated operations index."</p>
+      </div>
+    </div>
+
+    <!-- Dynamic Repos Container -->
+    <div id="github-missions-grid" class="projects-grid reveal">
+      <!-- Skeletons will go here initially -->
+    </div>
+
+    <div class="mission-footer"><span>Operations database synchronized</span><span>◈ ◈ ◈</span></div>
   </section>
   <!--
 
@@ -3917,6 +4165,9 @@
         setTimeout(showLevelUp, 600);
       }
 
+      // Dynamic github projects fetch and refresh
+      fetchAndRenderGitHubMissions(force);
+
       setTimeout(() => {
         hideSyncDialogue();
         btn.classList.remove('syncing');
@@ -3936,7 +4187,7 @@
       let current = 0;
       const iv = setInterval(() => {
         if (current < 20) { segs[current].classList.add('filled'); current++; pctNum.textContent = Math.round((current / 20) * 100) }
-        else { clearInterval(iv); setTimeout(() => preloader.classList.add('hide'), 200); setTimeout(() => { preloader.remove(); refreshAllStats(true) }, 700) }
+        else { clearInterval(iv); setTimeout(() => preloader.classList.add('hide'), 200); setTimeout(() => { preloader.remove(); refreshAllStats(true); fetchAndRenderGitHubMissions(); }, 700) }
       }, 80);
     })();
 
@@ -4050,7 +4301,21 @@
 
       /* ─── CAMERA ─── */
       const cam = { x: 0, y: 0, zoom: 1, sx: 0, sy: 0, sEnd: 0, sI: 0 };
-      function shakeCamera(intensity, dur) { cam.sI = intensity; cam.sEnd = pnow() + dur; }
+      function shakeCamera(intensity, dur) { 
+        cam.sI = intensity; 
+        cam.sEnd = pnow() + dur; 
+        
+        // Also add element-level CSS shake
+        const canvasEl = document.getElementById('battleCanvas');
+        if (canvasEl) {
+          canvasEl.classList.remove('screen-shake-anim');
+          void canvasEl.offsetWidth; // trigger reflow
+          canvasEl.classList.add('screen-shake-anim');
+          setTimeout(() => {
+            canvasEl.classList.remove('screen-shake-anim');
+          }, dur);
+        }
+      }
       function updateCamera(t) {
         cam.x = Math.sin(t * 0.0003) * 15;
         if (pnow() < cam.sEnd) { cam.sx = (Math.random() - 0.5) * 2 * cam.sI; cam.sy = (Math.random() - 0.5) * 2 * cam.sI; }
@@ -4223,34 +4488,206 @@
       }
 
       /* ─── KAIDO ─── */
-      const kaido = { kb: 0, aS: 1, flk: false };
+      const kaido = {
+        kb: 0,
+        aS: 1,
+        flk: false,
+        state: 'IDLE', // 'IDLE', 'STAGGER', 'COLLAPSE', 'DISSOLVING', 'DEFEATED'
+        fadeVal: 1,
+        rotVal: 0,
+        yOffset: 0,
+        stateT: 0,
+        respawnT: 0
+      };
       let nxtKP = pnow() + rand(15000, 20000);
 
       function drawKaido(t) {
+        if (kaido.state === 'DEFEATED') {
+          drawDefeatedBanner(t);
+          return;
+        }
+
         const sc = isMobile ? 1.43 : 2.2;
         const kx = W * (isMobile ? 0.80 : 0.78), by = H * FLOOR_Y;
         const bx2 = 1 + 0.02 * Math.sin(t * 0.0016);
-        ctx.save(); ctx.translate(kx + kaido.kb, by); ctx.scale(sc * bx2, sc);
+        ctx.save();
+        ctx.translate(kx + kaido.kb, by + kaido.yOffset);
+        if (kaido.rotVal !== 0) ctx.rotate(kaido.rotVal);
+        ctx.scale(sc * bx2, sc);
+
         // Aura
-        const aA = kaido.flk ? 0.05 + Math.random() * 0.15 : 0.12;
-        ctx.fillStyle = 'rgba(100,0,150,' + aA + ')'; ctx.beginPath(); ctx.ellipse(0, -70, 40 * kaido.aS, 60 * kaido.aS, 0, 0, 6.28); ctx.fill();
-        // Dark lightning
-        for (let i = 0; i < (isMobile ? 3 : 6); i++) {
-          if ((t + i * 100) % 80 < 20) continue;
-          const ag = rand(0, 6.28); ctx.strokeStyle = 'rgba(160,40,200,' + (0.4 + Math.random() * 0.3) + ')'; ctx.lineWidth = 1.5;
-          ctx.beginPath(); let bx3 = Math.cos(ag) * 20, by3 = -70 + Math.sin(ag) * 30; ctx.moveTo(bx3, by3);
-          for (let j = 0; j < 3; j++) { bx3 += Math.cos(ag) * 12 + rand(-6, 6); by3 += Math.sin(ag) * 12 + rand(-6, 6); ctx.lineTo(bx3, by3); } ctx.stroke();
+        const aA = (kaido.flk ? 0.05 + Math.random() * 0.15 : 0.12) * kaido.fadeVal;
+        if (aA > 0.01) {
+          ctx.fillStyle = 'rgba(100,0,150,' + aA + ')'; ctx.beginPath(); ctx.ellipse(0, -70, 40 * kaido.aS, 60 * kaido.aS, 0, 0, 6.28); ctx.fill();
         }
+
+        // Dark lightning
+        if (kaido.state !== 'DISSOLVING' && kaido.state !== 'COLLAPSE') {
+          for (let i = 0; i < (isMobile ? 3 : 6); i++) {
+            if ((t + i * 100) % 80 < 20) continue;
+            const ag = rand(0, 6.28); ctx.strokeStyle = 'rgba(160,40,200,' + (0.4 + Math.random() * 0.3) + ')'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); let bx3 = Math.cos(ag) * 20, by3 = -70 + Math.sin(ag) * 30; ctx.moveTo(bx3, by3);
+            for (let j = 0; j < 3; j++) { bx3 += Math.cos(ag) * 12 + rand(-6, 6); by3 += Math.sin(ag) * 12 + rand(-6, 6); ctx.lineTo(bx3, by3); } ctx.stroke();
+          }
+        }
+
         // Character sprite image
         if (imgKaido.complete) {
           ctx.save();
-          ctx.shadowBlur = 20; ctx.shadowColor = 'rgba(220, 38, 38, 0.45)';
+          ctx.globalAlpha = kaido.fadeVal;
+          ctx.shadowBlur = 20 * kaido.fadeVal; ctx.shadowColor = 'rgba(220, 38, 38, 0.45)';
           ctx.drawImage(imgKaido, -48, -100, 96, 96);
           ctx.restore();
         }
         ctx.restore();
-        // Ground dust
-        if (Math.random() < 0.1) spawnP({ x: kx + kaido.kb + rand(-30, 30) * sc * 0.3, y: by - rand(0, 10), vx: rand(-0.3, 0.3), vy: -rand(0.5, 1.5), size: rand(1, 3), color: 'rgba(200,180,160,0.4)', baseAlpha: 0.4, life: 1500 });
+
+        // Spawn dissolving particles when dissolving
+        if (kaido.state === 'DISSOLVING') {
+          if (Math.random() < 0.4) {
+            spawnP({
+              x: kx + kaido.kb + rand(-60, 60),
+              y: by + kaido.yOffset - rand(10, 150),
+              vx: rand(-1, 1),
+              vy: -rand(2, 5),
+              size: rand(2, 5),
+              color: ['rgba(220,38,38,0.85)', 'rgba(168,85,247,0.85)', '#06b6d4', '#fff'][~~rand(0, 4)],
+              baseAlpha: 0.8,
+              life: rand(1000, 2000)
+            });
+          }
+        } else if (kaido.state === 'COLLAPSE') {
+          // Spawn heavy smoke and dust
+          if (Math.random() < 0.5) {
+            spawnP({
+              x: kx + kaido.kb + rand(-40, 40),
+              y: by - rand(0, 20),
+              vx: rand(-1.5, 1.5),
+              vy: -rand(0.5, 2),
+              size: rand(4, 8),
+              color: 'rgba(120, 110, 100, 0.4)',
+              baseAlpha: 0.4,
+              life: rand(1200, 2200)
+            });
+          }
+        } else {
+          // Ground dust in idle state
+          if (Math.random() < 0.1) spawnP({ x: kx + kaido.kb + rand(-30, 30) * sc * 0.3, y: by - rand(0, 10), vx: rand(-0.3, 0.3), vy: -rand(0.5, 1.5), size: rand(1, 3), color: 'rgba(200,180,160,0.4)', baseAlpha: 0.4, life: 1500 });
+        }
+      }
+
+      function drawDefeatedBanner(t) {
+        ctx.save();
+        const bannerText1 = "[!] TARGET ELIMINATED [!]";
+        const bannerText2 = "[+] MISSION SUCCESSFUL [+]";
+        
+        ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+        ctx.fillRect(W * 0.1, H * 0.35, W * 0.8, 120);
+        
+        // Neon cyber border lines
+        ctx.strokeStyle = "rgba(6, 182, 212, 0.8)";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(W * 0.1, H * 0.35, W * 0.8, 120);
+        
+        // Glitch glow lines
+        if (Math.random() < 0.15) {
+          ctx.strokeStyle = "rgba(239, 68, 68, 0.9)";
+          ctx.strokeRect(W * 0.1 + rand(-4, 4), H * 0.35 + rand(-2, 2), W * 0.8, 120);
+        }
+
+        // CRT scanner bar scrolling through banner
+        const barY = H * 0.35 + ((t * 0.1) % 120);
+        ctx.fillStyle = "rgba(6, 182, 212, 0.08)";
+        ctx.fillRect(W * 0.1, barY, W * 0.8, 8);
+
+        ctx.textAlign = "center";
+        
+        // Draw Banner Text 1 (Glitchy)
+        ctx.font = "bold 28px var(--font-heading)";
+        ctx.fillStyle = "#ef4444";
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = "#ef4444";
+        let gx = 0;
+        if (Math.random() < 0.1) gx = rand(-5, 5);
+        ctx.fillText(bannerText1, W * 0.5 + gx, H * 0.42);
+        
+        // Draw Banner Text 2
+        ctx.font = "14px var(--font-mono)";
+        ctx.fillStyle = "#22c55e";
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "#22c55e";
+        ctx.fillText(bannerText2, W * 0.5, H * 0.49);
+        
+        ctx.restore();
+      }
+
+      function updateKaidoState(t) {
+        if (kaido.state === 'IDLE') {
+          // Normal state, controlled by updateAttack and rand animations
+        }
+        else if (kaido.state === 'STAGGER') {
+          kaido.kb = lerp(kaido.kb, 120, 0.1);
+          kaido.rotVal = lerp(kaido.rotVal, 0.15, 0.15);
+          if (kaido.kb > 110) {
+            kaido.state = 'COLLAPSE';
+            kaido.stateT = t;
+          }
+        }
+        else if (kaido.state === 'COLLAPSE') {
+          const duration = 1200;
+          const progress = Math.min((t - kaido.stateT) / duration, 1);
+          kaido.yOffset = lerp(0, 40, progress);
+          kaido.rotVal = lerp(0.15, 0.8, progress);
+          if (progress >= 1) {
+            kaido.state = 'DISSOLVING';
+            kaido.stateT = t;
+          }
+        }
+        else if (kaido.state === 'DISSOLVING') {
+          const duration = 1800;
+          const progress = Math.min((t - kaido.stateT) / duration, 1);
+          kaido.fadeVal = 1 - progress;
+          kaido.yOffset = 40 + progress * 20;
+          if (progress >= 1) {
+            kaido.state = 'DEFEATED';
+            kaido.respawnT = t + 10000; // Auto-respawn after 10s
+          }
+        }
+        else if (kaido.state === 'DEFEATED') {
+          if (t > kaido.respawnT) {
+            respawnKaido(t);
+          }
+        }
+      }
+
+      function respawnKaido(t) {
+        kaido.state = 'IDLE';
+        kaido.kb = 0;
+        kaido.yOffset = 0;
+        kaido.rotVal = 0;
+        kaido.fadeVal = 0;
+        const kx = W * (isMobile ? 0.80 : 0.78), by = H * FLOOR_Y;
+        for (let i = 0; i < 40; i++) {
+          spawnP({
+            x: kx + rand(-30, 30),
+            y: by - rand(0, 100),
+            vx: rand(-1, 1),
+            vy: rand(-1, 1),
+            size: rand(2, 4),
+            color: '#06b6d4',
+            baseAlpha: 0.8,
+            life: 800
+          });
+        }
+        let startFade = pnow();
+        const fadeIv = setInterval(() => {
+          const now = pnow();
+          const p = Math.min((now - startFade) / 1000, 1);
+          kaido.fadeVal = p;
+          if (p >= 1) {
+            clearInterval(fadeIv);
+            kaido.fadeVal = 1;
+          }
+        }, 16);
       }
 
       /* ─── EFFECTS ─── */
@@ -4271,7 +4708,24 @@
       function drawVig() { if (vigA <= 0) return; const g = ctx.createRadialGradient(W * 0.5, H * 0.5, W * 0.2, W * 0.5, H * 0.5, W * 0.7); g.addColorStop(0, 'transparent'); g.addColorStop(1, 'rgba(0,0,0,' + vigA + ')'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
 
       /* ─── ATTACK SYSTEM ─── */
-      function triggerAttack(cb, fin) { if (zoro.state !== 'IDLE') return; zoro.state = 'CHARGING'; zoro.t0 = pnow(); zoro.cb = cb; zoro.fin = fin || false; if (fin) vigA = 0.4; }
+      function triggerAttack(cb, fin) { 
+        if (zoro.state !== 'IDLE') return; 
+
+        // If Kaido is defeated or dissolving, respawn him instantly before attack
+        if (kaido.state === 'DEFEATED' || kaido.state === 'DISSOLVING' || kaido.state === 'COLLAPSE') {
+          kaido.state = 'IDLE';
+          kaido.kb = 0;
+          kaido.yOffset = 0;
+          kaido.rotVal = 0;
+          kaido.fadeVal = 1;
+        }
+
+        zoro.state = 'CHARGING'; 
+        zoro.t0 = pnow(); 
+        zoro.cb = cb; 
+        zoro.fin = fin || false; 
+        if (fin) vigA = 0.4; 
+      }
 
       function updateAttack(t) {
         if (zoro.state === 'IDLE') return;
@@ -4297,10 +4751,15 @@
         if (zoro.state === 'IMPACT') {
           if (el < 30) {
             fx.fA = zoro.fin ? 0.7 : 0.35; fx.fC = zoro.fin ? 'rgba(255,255,255,0.7)' : 'rgba(200,255,200,0.35)';
-            shakeCamera(zoro.fin ? 8 : 4, zoro.fin ? 600 : 350);
+            shakeCamera(zoro.fin ? 16 : 4, zoro.fin ? 1000 : 350);
             const ix2 = kx2 * W, iy2 = H * FLOOR_Y - 80, sct = zoro.fin ? 60 : 25;
             for (let i = 0; i < sct; i++) { const ag = rand(0, 6.28), sp = rand(3, zoro.fin ? 15 : 8); fx.sparks.push({ x: ix2, y: iy2, vx: Math.cos(ag) * sp, vy: Math.sin(ag) * sp - 2, sz: rand(2, 5), color: ['rgba(100,255,120,0.9)', 'rgba(200,150,255,0.9)', '#fff'][~~rand(0, 3)], born: pnow() }); }
-            kaido.kb = 0; kaido.flk = true;
+            if (zoro.fin) {
+              kaido.state = 'STAGGER';
+              kaido.stateT = pnow();
+            } else {
+              kaido.kb = 0; kaido.flk = true;
+            }
             fx.shockW.push({ x: ix2, y: iy2, r0: 20, r1: zoro.fin ? 400 : 100, a: 0.7, w: zoro.fin ? 8 : 4, c: '150,200,255', life: zoro.fin ? 800 : 600, born: pnow() });
             for (let i = 0; i < (zoro.fin ? 8 : 5); i++) fx.debris.push({ x: ix2 + rand(-20, 20), y: iy2 + rand(-10, 30), vx: rand(-4, 4), vy: rand(-6, -1), w: rand(4, 10), h: rand(3, 7), rot: 0, rs: rand(-0.1, 0.1), born: pnow() });
             if (zoro.fin) {
@@ -4308,15 +4767,27 @@
               for (let i = 0; i < 5; i++) { const ag = rand(-0.5, 0.5) + (i - 2) * 0.4; const pts = [{ x: ix2, y: H * FLOOR_Y }]; for (let j = 1; j <= 5; j++) pts.push({ x: ix2 + Math.cos(ag) * j * 25 + rand(-5, 5), y: H * FLOOR_Y + Math.sin(ag) * j * 8 + rand(-3, 3) }); fx.cracks.push({ pts, born: pnow() }); }
             }
           }
-          kaido.kb = lerp(kaido.kb, zoro.fin ? 80 : 30, 0.1);
+          if (!zoro.fin) {
+            kaido.kb = lerp(kaido.kb, 30, 0.1);
+          }
           if (el > (zoro.fin ? 1500 : 650)) { zoro.state = 'RETURNING'; zoro.t0 = pnow(); if (zoro.cb) { zoro.cb(); zoro.cb = null; } }
         }
         if (zoro.state === 'RETURNING') {
           const rd = zoro.fin ? 1500 : 1100;
           if (el < rd) {
-            zoro.x = lerp(zoro.x, zoro.bx, 0.03); kaido.kb = lerp(kaido.kb, 0, 0.02); cam.zoom = lerp(cam.zoom, 1, 0.02); vigA = lerp(vigA, 0, 0.02);
+            zoro.x = lerp(zoro.x, zoro.bx, 0.03); 
+            if (!zoro.fin) {
+              kaido.kb = lerp(kaido.kb, 0, 0.02);
+            }
+            cam.zoom = lerp(cam.zoom, 1, 0.02); vigA = lerp(vigA, 0, 0.02);
             if (el % 60 < 16 && el < 400) zoro.ghosts.push({ x: zoro.x + 0.02, born: pnow() });
-          } else { zoro.x = zoro.bx; zoro.state = 'IDLE'; kaido.kb = 0; kaido.flk = false; cam.zoom = 1; zoro.fin = false; vigA = 0; }
+          } else { 
+            zoro.x = zoro.bx; zoro.state = 'IDLE'; 
+            if (!zoro.fin) {
+              kaido.kb = 0; kaido.flk = false;
+            }
+            cam.zoom = 1; zoro.fin = false; vigA = 0; 
+          }
         }
       }
 
@@ -4326,10 +4797,130 @@
         const t = pnow(), dt = Math.min(t - lt, 50) / 16.67; lt = t;
         ctx.clearRect(0, 0, W, H);
         updateCamera(t); updateAttack(t); updateParticles(dt);
+        updateKaidoState(t);
         if (pnow() > nxtKP) { kaido.aS = 1.5; nxtKP = pnow() + rand(15000, 20000); }
         kaido.aS = lerp(kaido.aS, 1, 0.01);
         applyCam(); drawBG(t); drawLuffy(t); drawZoro(t); drawKaido(t); drawParticles(); drawFX(t); drawSprFlash(); drawVig(); restoreCam();
         requestAnimationFrame(loop);
+      }
+
+      /* ─── NARRATIVE SYSTEM CONFIG ─── */
+      const SECTION_MISSIONS = {
+        '#stats': {
+          logs: [
+            "[SYSTEM] Scanning Network...",
+            "[SYSTEM] Recon Complete.",
+            "[SYSTEM] Vulnerability Detected."
+          ],
+          story: "Mission Log #01:\nTarget Reconnaissance Started...\nSuspicious Traffic Detected.\nPotential Vulnerability Found.\nPirate Hunter Zoro has entered the battlefield."
+        },
+        '#live-stats': {
+          logs: [
+            "[SYSTEM] Expanding Attack Surface...",
+            "[SYSTEM] Subdomain Enumeration Finished.",
+            "[SYSTEM] Authentication Weakness Identified."
+          ],
+          story: "Mission Log #02:\nAttack Surface Expanded.\nAuthentication Weakness Identified.\nExploit Chain Ready.\nPreparing Final Strike."
+        },
+        '#missions': {
+          logs: [
+            "[SYSTEM] Exploit Chain Ready...",
+            "[SYSTEM] Executing Exploit...",
+            "[SYSTEM] Critical Vulnerability Confirmed."
+          ],
+          story: "Mission Log #03:\nCritical Vulnerability Confirmed.\nPrivilege Escalation Successful.\nEnemy Defenses Collapsing."
+        },
+        '#contact': {
+          logs: [
+            "[SYSTEM] Privilege Escalation Successful...",
+            "[SYSTEM] Root Access Obtained.",
+            "[SYSTEM] Exfiltrating Secure Data..."
+          ],
+          story: "Mission Log #04:\nRoot Access Obtained.\nCommencing Den Den Mushi secure uplink.\nEstablishing direct channels."
+        }
+      };
+
+      let currentNavTarget = null;
+      let navTypingTimeout = null;
+
+      function runNavTransition(targetId) {
+        const mission = SECTION_MISSIONS[targetId];
+        if (!mission) {
+          document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+          return;
+        }
+
+        currentNavTarget = targetId;
+        
+        // Scroll back to top to view typewriter story text if scrolled down
+        if (window.scrollY > 100) {
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+
+        // Reset and show dialogue boxes
+        dlgHint.classList.add('show');
+        dlgBox.classList.add('show');
+        dlgTyping = true;
+        dlgText.textContent = '';
+        dlgCaret.classList.remove('show');
+
+        // Trigger Zoro canvas attack animation
+        const isFin = targetId === '#contact';
+        triggerAttack(null, isFin);
+
+        // 1. Play cyber logs sequence
+        let logIdx = 0;
+        function printNextLog() {
+          if (currentNavTarget !== targetId) return;
+          if (logIdx < mission.logs.length) {
+            dlgText.textContent = mission.logs[logIdx] + "\n";
+            logIdx++;
+            navTypingTimeout = setTimeout(printNextLog, 650);
+          } else {
+            // 2. Play typewriter story
+            dlgText.textContent = '';
+            let charIdx = 0;
+            const storyStr = mission.story;
+            
+            function typeStoryChar() {
+              if (currentNavTarget !== targetId) return;
+              if (charIdx < storyStr.length) {
+                dlgText.textContent += storyStr[charIdx];
+                charIdx++;
+                navTypingTimeout = setTimeout(typeStoryChar, 20);
+              } else {
+                dlgTyping = false;
+                dlgCaret.classList.add('show');
+                // Auto-scroll after reading time
+                navTypingTimeout = setTimeout(() => {
+                  completeNavTransition(targetId);
+                }, 1400);
+              }
+            }
+            typeStoryChar();
+          }
+        }
+        printNextLog();
+      }
+
+      function skipNavTransition() {
+        if (!currentNavTarget) return;
+        const target = currentNavTarget;
+        clearTimeout(navTypingTimeout);
+        completeNavTransition(target);
+      }
+
+      function completeNavTransition(targetId) {
+        currentNavTarget = null;
+        dlgTyping = false;
+        dlgBox.classList.remove('show');
+        dlgHint.classList.remove('show');
+        dlgText.textContent = '';
+        
+        const targetEl = document.querySelector(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+        }
       }
 
       /* ─── NAV ATTACK WIRING ─── */
@@ -4338,19 +4929,27 @@
           const href = this.getAttribute('href');
           if (!href || href.charAt(0) !== '#') return;
           e.preventDefault();
+          
           const target = document.querySelector(href);
           if (!target) return;
-          const isFin = href === '#contact';
+          
           const mm = document.getElementById('mobile-menu');
           if (mm) mm.classList.remove('open');
           
-          if (link.classList.contains('nav-center')) {
-            // Logo click: scroll to top without triggering Zoro attack animation
+          if (link.classList.contains('nav-center') || href === '#hero') {
+            skipNavTransition();
             target.scrollIntoView({ behavior: 'smooth' });
+            return;
+          }
+          
+          // Click again to skip immediately
+          if (currentNavTarget === href) {
+            skipNavTransition();
           } else {
-            // Regular links: trigger attack animation and scroll
-            triggerAttack(null, isFin);
-            setTimeout(function () { target.scrollIntoView({ behavior: 'smooth' }); }, 300);
+            if (currentNavTarget) {
+              skipNavTransition();
+            }
+            runNavTransition(href);
           }
         });
       });
@@ -4358,7 +4957,13 @@
       /* ─── FINISHING MOVE ON CONTACT SCROLL ─── */
       let finDone = false;
       const cObs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) { if (e.isIntersecting && !finDone && zoro.state === 'IDLE') { finDone = true; triggerAttack(null, true); setTimeout(function () { finDone = false; }, 10000); } });
+        entries.forEach(function (e) { 
+          if (e.isIntersecting && !finDone && zoro.state === 'IDLE') { 
+            finDone = true; 
+            triggerAttack(null, true); 
+            setTimeout(function () { finDone = false; }, 10000); 
+          } 
+        });
       }, { threshold: 0.3 });
       const cEl = document.getElementById('contact');
       if (cEl) cObs.observe(cEl);
@@ -4396,23 +5001,19 @@
         const s = dlgSteps[dlgStep];
         if (dlgStep === 0) { dlgHint.classList.add('show'); dlgBox.classList.add('show'); }
         if (s.attack) {
-          // Trigger Zoro attack + flash arcane/weapon effects
           triggerAttack(null, false);
           const kx2 = (isMobile ? 0.80 : 0.78) * W, iy2 = H * FLOOR_Y - 80;
           flashSprite(imgArcane, kx2 - 90, iy2 - 60, 180, 180, 600);
           flashSprite(imgSlash, zoro.x * W - 40, H * FLOOR_Y - 100, 180, 180, 500);
         }
         if (s.impact) {
-          // Extra shake + flash impact image
           shakeCamera(6, 400);
           fx.fA = 0.4; fx.fC = 'rgba(200,255,200,0.4)';
           const kx3 = (isMobile ? 0.80 : 0.78) * W, iy3 = H * FLOOR_Y - 80;
           flashSprite(imgImpact, kx3 - 90, iy3 - 60, 180, 180, 500);
-          // Spawn extra impact sparks
           for (let i = 0; i < 20; i++) { const ag = rand(0, 6.28), sp = rand(3, 8); fx.sparks.push({ x: kx3, y: iy3, vx: Math.cos(ag) * sp, vy: Math.sin(ag) * sp - 2, sz: rand(2, 5), color: ['rgba(100,255,120,0.9)', 'rgba(200,150,255,0.9)', '#fff'][~~rand(0, 3)], born: pnow() }); }
         }
         if (s.bossDefeated) {
-          // Trigger finisher attack
           triggerAttack(null, true);
         }
         dlgTypeText(s.text);
@@ -4423,18 +5024,29 @@
         dlgText.textContent = ''; dlgCaret.classList.remove('show');
       }
 
-      // Tab key ONLY to advance dialogue (no click)
+      // Skip typewriter on clicking dialogue box
+      if (dlgBox) {
+        dlgBox.addEventListener('click', function () {
+          if (currentNavTarget) {
+            skipNavTransition();
+          }
+        });
+      }
+
+      // Tab key dialogue progression & skip transitions
       var tabHintBadge = document.getElementById('tab-hint-badge');
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Tab') {
           e.preventDefault();
+          if (currentNavTarget) {
+            skipNavTransition();
+            return;
+          }
           dlgAdvance();
-          // Flash the tab hint badge on press
           if (tabHintBadge) {
             tabHintBadge.classList.remove('activated');
             void tabHintBadge.offsetWidth;
             tabHintBadge.classList.add('activated');
-            // Update label text after first press
             var lbl = tabHintBadge.querySelector('.tab-label');
             if (lbl && dlgStep >= 0 && dlgStep < dlgSteps.length - 1) lbl.textContent = 'Press to continue';
             else if (lbl && dlgStep >= dlgSteps.length - 1) lbl.textContent = 'Story complete!';
@@ -4442,20 +5054,22 @@
         }
       });
       var heroEl = document.getElementById('hero');
-      // Show hint after 1.5s
       var heroObs2 = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) { if (e.isIntersecting && dlgStep === -1) setTimeout(function () { dlgHint.classList.add('show'); }, 1500); });
       }, { threshold: 0.3 });
       heroObs2.observe(heroEl);
-      // Mobile: use tap instead of Tab key
+      
       if ('ontouchstart' in window) {
         var mHint = document.querySelector('.dialogue-hint .mobile-only');
         var dHint = document.querySelector('.dialogue-hint .desktop-only');
         if (mHint) mHint.style.display = 'inline';
         if (dHint) dHint.style.display = 'none';
-        // On mobile, allow tapping the hero to advance (since no Tab key)
         if (heroEl) heroEl.addEventListener('click', function (e) {
           if (e.target.closest('a, button')) return;
+          if (currentNavTarget) {
+            skipNavTransition();
+            return;
+          }
           dlgAdvance();
         });
       }
@@ -4518,7 +5132,160 @@
     })();
 
     /* ═══════════════════════════════════════════════════════
-       LOAD CACHED DATA ON PAGE INIT
+       DYNAMIC GITHUB MISSIONS ("PROJECT ARSENAL") SYSTEM
+       ═══════════════════════════════════════════════════════ */
+    async function fetchAndRenderGitHubMissions(forceRefresh = false) {
+      const grid = document.getElementById('github-missions-grid');
+      if (!grid) return;
+      
+      // Render 3 skeleton loading cards initially
+      grid.innerHTML = Array(3).fill(`
+        <div class="cyber-skeleton-card">
+          <div class="cyber-card-header">
+            <div class="shimmer" style="width: 80px; height: 10px; opacity: 0.3;"></div>
+            <div class="shimmer" style="width: 50px; height: 14px; border-radius: 3px; opacity: 0.3;"></div>
+          </div>
+          <div style="flex: 1; margin-top: 10px;">
+            <div class="shimmer" style="width: 160px; height: 18px; margin-bottom: 15px; opacity: 0.3;"></div>
+            <div class="shimmer" style="width: 90%; height: 10px; margin-bottom: 8px; opacity: 0.2;"></div>
+            <div class="shimmer" style="width: 75%; height: 10px; margin-bottom: 8px; opacity: 0.2;"></div>
+          </div>
+          <div class="shimmer" style="width: 100%; height: 1px; margin: 15px 0; opacity: 0.1;"></div>
+          <div style="display: flex; gap: 10px;">
+            <div class="shimmer" style="width: 90px; height: 24px; border-radius: 4px; opacity: 0.3;"></div>
+          </div>
+        </div>
+      `).join('');
+
+      try {
+        let repos = null;
+        if (!forceRefresh) {
+          repos = Cache.get('github_repos');
+        } else {
+          Cache.clear('github_repos');
+        }
+
+        if (!repos) {
+          const res = await fetch(`https://api.github.com/users/${PROFILE_CONFIG.github}/repos?sort=updated&per_page=12`);
+          if (!res.ok) throw new Error('GitHub repos fetch failed');
+          repos = await res.json();
+          // Filter out forks if possible
+          const sourceRepos = repos.filter(r => !r.fork);
+          repos = sourceRepos.length > 0 ? sourceRepos : repos;
+          // Sort by stars descending, then date
+          repos.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
+          Cache.set('github_repos', repos);
+        }
+
+        renderMissions(repos, grid);
+      } catch (err) {
+        console.error('Error fetching dynamic repos:', err);
+        // Fallback mock repos (dossier style)
+        const mockRepos = [
+          { name: 'RUZZ', description: 'Interactive CLI tool engineered for web fuzzing. Generates precise web enumeration command lists.', stargazers_count: 4, language: 'Python', html_url: 'https://github.com/rj-karan/RUZZ' },
+          { name: 'narcox', description: 'Automated drug trafficking detection system powered by Telegram API, logging threat metadata.', stargazers_count: 2, language: 'Python', html_url: 'https://github.com/rj-karan/narcox' },
+          { name: 'cyber-portfolio', description: 'Pixel-art RPG cybersecurity theme portfolio showing hacker achievements.', stargazers_count: 1, language: 'HTML', html_url: 'https://github.com/rj-karan/cyber-portfolio' }
+        ];
+        renderMissions(mockRepos, grid);
+      }
+    }
+
+    function renderMissions(repos, grid) {
+      grid.innerHTML = '';
+      
+      const missionMappings = {
+        'ruzz': {
+          target: 'Web Enumeration Automation',
+          result: 'Generates precise fuzzing inputs for penetration testing targets.',
+          status: 'SUCCESS'
+        },
+        'narcox': {
+          target: 'Telegram Intel Gathering Dashboard',
+          result: 'FastAPI dashboard monitoring drug trafficking indicators using NLP.',
+          status: 'SUCCESS'
+        },
+        'cyber-portfolio': {
+          target: 'Gamified Security Portfolio',
+          result: 'Interactive Wano combat theme showcasing full-stack capabilities.',
+          status: 'ACTIVE'
+        }
+      };
+
+      // Exclude RUZZ and narcox from dynamic list because they are already featured in core grid!
+      const filteredRepos = repos.filter(r => r.name.toLowerCase() !== 'ruzz' && r.name.toLowerCase() !== 'narcox');
+
+      if (filteredRepos.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; font-family: var(--font-mono); color: var(--void-500); padding: 40px;">◈ No archived missions indexed ◈</div>`;
+        return;
+      }
+
+      filteredRepos.forEach((repo, index) => {
+        const key = repo.name.toLowerCase();
+        const custom = missionMappings[key] || {};
+        
+        // Offset core missions (Mission 1 and 2 are RUZZ and NARCOX)
+        const missionNum = String(index + 3).padStart(2, '0');
+        const title = repo.name.toUpperCase();
+        
+        let status = custom.status || 'EXPERIMENTAL';
+        if (repo.stargazers_count > 3 && !custom.status) {
+          status = 'SUCCESS';
+        } else if (repo.homepage && !custom.status) {
+          status = 'ACTIVE';
+        }
+        
+        const badgeClass = status.toLowerCase();
+        const target = custom.target || `Securing ${repo.language || 'Codebase'} Pipeline`;
+        const result = custom.result || (repo.description || 'Synchronizing operational repository code logs.');
+        
+        const techStack = [
+          repo.language,
+          repo.stargazers_count ? `${repo.stargazers_count} ★` : '',
+          'Repo Log'
+        ].filter(Boolean);
+
+        const card = document.createElement('div');
+        card.className = `cyber-card ${badgeClass}`;
+        card.innerHTML = `
+          <div>
+            <div class="cyber-card-header">
+              <span class="cyber-card-meta">MISSION #${missionNum}</span>
+              <span class="cyber-badge ${badgeClass}">${status}</span>
+            </div>
+            <h3 class="cyber-card-title">${title}</h3>
+            <div class="cyber-card-body">
+              <div class="cyber-target">
+                <span class="cyber-label">TARGET:</span>
+                <span class="cyber-target-val">${target}</span>
+              </div>
+              <div class="cyber-result">
+                <span class="cyber-label">RESULT:</span>
+                <span class="cyber-result-val">${result}</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="cyber-tech-tags">
+              ${techStack.map(tech => `<span class="cyber-tech-tag">${tech}</span>`).join('')}
+            </div>
+            <div class="cyber-card-footer">
+              <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer" class="cyber-btn-small primary">Archive Link</a>
+              ${repo.homepage ? `<a href="${repo.homepage}" target="_blank" rel="noopener noreferrer" class="cyber-btn-small">Live Target</a>` : ''}
+            </div>
+          </div>
+        `;
+        
+        grid.appendChild(card);
+      });
+      
+      const activeCount = document.getElementById('active-bounties-count');
+      if (activeCount) {
+        activeCount.textContent = `◈ Active Missions: ${filteredRepos.length + 2}`;
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       LOAD CACHED DATA & INITS
        ═══════════════════════════════════════════════════════ */
     (function () {
       const pairs = [
@@ -4535,6 +5302,13 @@
           if (ts) document.getElementById('global-last-synced').textContent = '◈ Cached: ' + formatTime(ts);
         }
       });
+      
+      // Load Github dynamic missions from cache on load
+      const cachedRepos = Cache.get('github_repos');
+      if (cachedRepos) {
+        const grid = document.getElementById('github-missions-grid');
+        if (grid) renderMissions(cachedRepos, grid);
+      }
     })();
   </script>
 </body>
