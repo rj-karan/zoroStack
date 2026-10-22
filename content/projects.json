@@ -1,0 +1,42 @@
+[
+  {
+    "title": "RUZZ",
+    "kind": "SECURITY TOOL",
+    "symbol": "⌁",
+    "summary": "An interactive command-line tool for generating fuzzing commands for common web enumeration workflows.",
+    "stack": ["PYTHON", "WEB SECURITY"],
+    "url": "https://github.com/rj-karan/RUZZ",
+    "order": 1,
+    "published": true
+  },
+  {
+    "title": "ZORIX",
+    "kind": "SECURITY PLATFORM",
+    "symbol": "✳",
+    "summary": "A platform that simulates threats and validates defenses, with a focus on measurable results before deployment.",
+    "stack": ["PYTHON", "SECURITY VALIDATION"],
+    "url": "https://github.com/rj-karan/Zorix-Exposing-Threats-Certifying-Trust",
+    "order": 2,
+    "published": true
+  },
+  {
+    "title": "CRISPR v1",
+    "kind": "PROTOTYPE",
+    "symbol": "◈",
+    "summary": "A TypeScript prototype exploring financial risk quantification and a clearer way to work with complex risk signals.",
+    "stack": ["TYPESCRIPT", "PRODUCT ENGINEERING"],
+    "url": "https://github.com/rj-karan/crisprv1",
+    "order": 3,
+    "published": true
+  },
+  {
+    "title": "Stats Proxy",
+    "kind": "DEVELOPER TOOL",
+    "symbol": "↗",
+    "summary": "A small API layer for bringing coding and security platform activity into a personal web experience.",
+    "stack": ["JAVASCRIPT", "API"],
+    "url": "https://github.com/rj-karan/stats-proxy",
+    "order": 4,
+    "published": true
+  }
+]

@@ -1,0 +1,158 @@
+media:
+  input: public/uploads
+  output: public/uploads
+  rename: safe
+
+content:
+  - name: site
+    label: Profile & contact
+    type: file
+    path: content/site.json
+    format: json
+    fields:
+      - name: hero_intro
+        label: Hero introduction
+        type: text
+      - name: about
+        label: About text
+        type: text
+      - name: contact_intro
+        label: Contact introduction
+        type: text
+      - name: email
+        label: Contact email
+        type: string
+
+  - name: projects
+    label: Selected projects
+    type: file
+    path: content/projects.json
+    format: json
+    list: true
+    fields:
+      - name: title
+        label: Project name
+        type: string
+      - name: kind
+        label: Category label
+        type: string
+      - name: symbol
+        label: Decorative symbol
+        type: string
+      - name: summary
+        label: Short description
+        type: text
+      - name: stack
+        label: Technologies
+        type: string
+        list: true
+      - name: url
+        label: Repository or live URL
+        type: string
+      - name: order
+        label: Display order
+        type: number
+      - name: published
+        label: Published
+        type: boolean
+
+  - name: reports
+    label: Security reports
+    type: file
+    path: content/reports.json
+    format: json
+    list: true
+    fields:
+      - name: title
+        type: string
+      - name: slug
+        label: URL slug (lowercase letters, numbers, hyphens)
+        type: string
+        required: false
+      - name: summary
+        type: text
+      - name: date
+        type: date
+      - name: severity
+        type: string
+      - name: body
+        label: Full report
+        type: rich-text
+        required: false
+        options:
+          format: markdown
+      - name: url
+        label: External source URL (optional)
+        type: string
+        required: false
+      - name: published
+        type: boolean
+
+  - name: cves
+    label: CVEs
+    type: file
+    path: content/cves.json
+    format: json
+    list: true
+    fields:
+      - name: title
+        label: CVE ID and title
+        type: string
+      - name: summary
+        type: text
+      - name: date
+        type: date
+      - name: url
+        label: Public advisory URL
+        type: string
+      - name: published
+        type: boolean
+
+  - name: articles
+    label: Articles & writeups
+    type: file
+    path: content/articles.json
+    format: json
+    list: true
+    fields:
+      - name: title
+        type: string
+      - name: slug
+        label: URL slug (lowercase letters, numbers, hyphens)
+        type: string
+        required: false
+      - name: summary
+        type: text
+      - name: date
+        type: date
+      - name: body
+        label: Article content
+        type: rich-text
+        required: false
+        options:
+          format: markdown
+      - name: url
+        label: External article URL (optional)
+        type: string
+        required: false
+      - name: published
+        type: boolean
+
+  - name: achievements
+    label: Achievements
+    type: file
+    path: content/achievements.json
+    format: json
+    list: true
+    fields:
+      - name: title
+        type: string
+      - name: summary
+        type: text
+      - name: date
+        type: date
+      - name: url
+        label: Public proof or announcement URL
+        type: string
+      - name: published
+        type: boolean
