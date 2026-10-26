@@ -4,7 +4,10 @@
     "kind": "SECURITY TOOL",
     "symbol": "⌁",
     "summary": "An interactive command-line tool for generating fuzzing commands for common web enumeration workflows.",
-    "stack": ["PYTHON", "WEB SECURITY"],
+    "stack": [
+      "PYTHON",
+      "WEB SECURITY"
+    ],
     "url": "https://github.com/rj-karan/RUZZ",
     "order": 1,
     "published": true
@@ -14,7 +17,10 @@
     "kind": "SECURITY PLATFORM",
     "symbol": "✳",
     "summary": "A platform that simulates threats and validates defenses, with a focus on measurable results before deployment.",
-    "stack": ["PYTHON", "SECURITY VALIDATION"],
+    "stack": [
+      "PYTHON",
+      "SECURITY VALIDATION"
+    ],
     "url": "https://github.com/rj-karan/Zorix-Exposing-Threats-Certifying-Trust",
     "order": 2,
     "published": true
@@ -24,7 +30,10 @@
     "kind": "PROTOTYPE",
     "symbol": "◈",
     "summary": "A TypeScript prototype exploring financial risk quantification and a clearer way to work with complex risk signals.",
-    "stack": ["TYPESCRIPT", "PRODUCT ENGINEERING"],
+    "stack": [
+      "TYPESCRIPT",
+      "PRODUCT ENGINEERING"
+    ],
     "url": "https://github.com/rj-karan/crisprv1",
     "order": 3,
     "published": true
@@ -34,9 +43,39 @@
     "kind": "DEVELOPER TOOL",
     "symbol": "↗",
     "summary": "A small API layer for bringing coding and security platform activity into a personal web experience.",
-    "stack": ["JAVASCRIPT", "API"],
+    "stack": [
+      "JAVASCRIPT",
+      "API"
+    ],
     "url": "https://github.com/rj-karan/stats-proxy",
     "order": 4,
+    "published": true
+  },
+  {
+    "title": "Concord",
+    "kind": "TEAM PROJECT / DEVSECOPS",
+    "symbol": "◎",
+    "summary": "An open-source platform that triages security findings across DevSecOps tools, with auditable decisions and human review for consequential actions.",
+    "stack": [
+      "PYTHON",
+      "FASTAPI",
+      "SECURITY AUTOMATION"
+    ],
+    "url": "https://github.com/BeyondBug/Concord",
+    "order": 5,
+    "published": true
+  },
+  {
+    "title": "VigilentOps",
+    "kind": "TEAM PROJECT / SECURITY",
+    "symbol": "◇",
+    "summary": "An automated vulnerability management platform for monitoring software, source code issues, public CVEs, and security patches.",
+    "stack": [
+      "PYTHON",
+      "DEVSECOPS"
+    ],
+    "url": "https://github.com/BeyondBug/VigilentOps",
+    "order": 6,
     "published": true
   }
 ]

@@ -1,6 +1,6 @@
 media:
-  input: public/uploads
-  output: public/uploads
+  input: assets/uploads
+  output: assets/uploads
   rename: safe
 
 content:
@@ -22,6 +22,26 @@ content:
       - name: email
         label: Contact email
         type: string
+      - name: github
+        label: GitHub profile URL
+        type: string
+      - name: linkedin
+        label: LinkedIn profile URL
+        type: string
+      - name: tryhackme
+        label: TryHackMe profile URL
+        type: string
+      - name: hackthebox
+        label: Hack The Box profile URL
+        type: string
+        required: false
+      - name: leetcode
+        label: LeetCode profile URL
+        type: string
+      - name: medium
+        label: Medium profile URL
+        type: string
+        required: false
 
   - name: projects
     label: Selected projects

@@ -2,5 +2,11 @@
   "hero_intro": "I investigate how systems fail, build tools that make security work clearer, and document what I learn along the way.",
   "about": "I’m Karan RJ, a security researcher and full-stack developer based in India. I work across offensive security, web applications, and the tools that help people understand risk. I care about clear findings, useful software, and sharing the process behind both.",
   "contact_intro": "Security research, open-source collaboration, or an interesting build—I’d like to hear about it.",
-  "email": "rjkaran418@gmail.com"
+  "email": "rjkaran418@gmail.com",
+  "github": "https://github.com/rj-karan",
+  "linkedin": "https://www.linkedin.com/in/zororj/",
+  "tryhackme": "https://tryhackme.com/p/zororj",
+  "leetcode": "https://leetcode.com/u/zoro_rj/",
+  "medium": "https://medium.com/@rjkaran418",
+  "hackthebox": "https://profile.hackthebox.com/profile/019c8e6f-d9bc-7154-9912-4294960a0296"
 }
