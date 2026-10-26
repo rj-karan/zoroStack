@@ -1,14 +1,14 @@
 import './music.js?v=5';
-import {createPortfolioWorld} from './portfolio.js?v=10';
+import {createPortfolioWorld} from './portfolio.js?v=11';
 import * as T from '../assets/vendor/three.module.min.js';
 import {RoomEnvironment} from '../assets/vendor/environments/RoomEnvironment.js';
-import {createEgghead,createOcean} from './world.js?v=10';
-import {destinations,chapterIndex,TOUR_SECONDS,updateCamera,advanceJourney,cameraPose} from './journey.js?v=10';
+import {createEgghead,createOcean} from './world.js?v=11';
+import {destinations,chapterIndex,TOUR_SECONDS,updateCamera,advanceJourney,cameraPose} from './journey.js?v=11';
 
 const canvas=document.querySelector('#world'),loading=document.querySelector('#loading-copy'),enter=document.querySelector('#explore'),reduced=matchMedia('(prefers-reduced-motion: reduce)'),query=new URLSearchParams(location.search);
 let focusStop=null,focusBlend=0,focusWanted=false;
 let renderer,nature,exhibits,environment,pmrem,raf=0,last=0,lastPaint=0,clock=0,current=0,target=0,velocity=0,touring=false,paused=reduced.matches,dirty=true,active=-1,lost=false,audit=false,yaw=0,pitch=0,drag=null,lastRatio=1,quality=1;
-const records=[],errors=[],scene=new T.Scene(),camera=new T.PerspectiveCamera(44,1,.2,1600);scene.fog=new T.Fog(0xb7e6f0,150,540);
+const records=[],errors=[],scene=new T.Scene(),camera=new T.PerspectiveCamera(44,1,.2,3000);scene.fog=new T.Fog(0xb7e6f0,500,1800);
 const measure=()=>Math.max(1,document.querySelector('.journey').offsetHeight-innerHeight);
 function setTarget(value){focusWanted=false;document.querySelector('#leave-exhibit').hidden=true;target=Math.max(0,Math.min(1,value));if(reduced.matches||paused||lost)current=target;if(paused||reduced.matches)velocity=0;if(lost)setUI();scrollTo({top:target*measure(),behavior:'instant'});yaw=pitch=0;wake();}
 function wake(){dirty=true;if(!raf&&!document.hidden&&!lost&&renderer)raf=requestAnimationFrame(draw);}
@@ -20,7 +20,7 @@ function setUI(){
 }
 function applyExhibitFocus(){
  if(!focusStop||focusBlend<.001)return;
- const [x,y,z]=focusStop.position,look=new T.Vector3(x,y+4.1*.48,z),p=new T.Vector3(x,y+4.5*.48,z+11.7*.48);
+ const [x,y,z]=focusStop.position,scale=y>100?1:.48,look=new T.Vector3(x,y+4.1*scale,z),p=new T.Vector3(x,y+4.5*scale,z+11.7*scale);
  if(innerWidth<700)p.sub(look).multiplyScalar(1.52).add(look);
  const q=new T.Quaternion().setFromRotationMatrix(new T.Matrix4().lookAt(p,look,new T.Vector3(0,1,0)));
  camera.position.lerp(p,focusBlend);camera.quaternion.slerp(q,focusBlend);camera.fov=T.MathUtils.lerp(camera.fov,innerWidth<700?59:46,focusBlend);camera.updateProjectionMatrix();camera.updateMatrixWorld();
@@ -58,7 +58,7 @@ async function start(){
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;
   scene.add(new T.HemisphereLight(0xc8f3ff,0x6c88ac,1.25));const sun=new T.DirectionalLight(0xfff2db,2.5);sun.position.set(-45,95,65);sun.castShadow=true;sun.shadow.mapSize.setScalar(low?512:1536);Object.assign(sun.shadow.camera,{left:-57,right:57,top:60,bottom:-50,near:1,far:220});sun.shadow.camera.updateProjectionMatrix();sun.shadow.bias=-.0003;sun.shadow.normalBias=.06;scene.add(sun);
   environment=new RoomEnvironment();pmrem=new T.PMREMGenerator(renderer);const room=pmrem.fromScene(environment,.04,.1,100,{size:low?64:128});scene.environment=room.texture;scene.environmentIntensity=.32;environment.dispose();
-  const sky=new T.Mesh(new T.SphereGeometry(1100,48,24),new T.ShaderMaterial({side:T.BackSide,depthWrite:false,uniforms:{top:{value:new T.Color(0x219cE9)},bottom:{value:new T.Color(0xb4e9f8)}},vertexShader:'varying vec3 skyPosition;void main(){skyPosition=position;gl_Position=projectionMatrix*viewMatrix*vec4(position+cameraPosition,1.);}',fragmentShader:'uniform vec3 top;uniform vec3 bottom;varying vec3 skyPosition;void main(){float h=clamp(.65+normalize(skyPosition).y*1.1,.15,1.);gl_FragColor=vec4(mix(bottom,top,h),1.);\n\n#include <colorspace_fragment>\n}'}));sky.name='Sky';scene.add(sky);
+  const sky=new T.Mesh(new T.SphereGeometry(2500,48,24),new T.ShaderMaterial({side:T.BackSide,depthWrite:false,uniforms:{top:{value:new T.Color(0x219cE9)},bottom:{value:new T.Color(0xb4e9f8)}},vertexShader:'varying vec3 skyPosition;void main(){skyPosition=position;gl_Position=projectionMatrix*viewMatrix*vec4(position+cameraPosition,1.);}',fragmentShader:'uniform vec3 top;uniform vec3 bottom;varying vec3 skyPosition;void main(){float h=clamp(.65+normalize(skyPosition).y*1.1,.15,1.);gl_FragColor=vec4(mix(bottom,top,h),1.);\n\n#include <colorspace_fragment>\n}'}));sky.name='Sky';scene.add(sky);
   ocean=createOcean(scene);
   resize();renderer.render(scene,camera);nature=await createEgghead(scene,{low,onProgress:message=>loading.textContent=message});
   exhibits=await createPortfolioWorld(nature.world,{camera,canvas,wake,travel:setTarget});
@@ -67,7 +67,7 @@ async function start(){
   canvas.dataset.state='ready';document.body.classList.add('is-ready');enter.disabled=false;loading.textContent='The island is ready.';
   if(query.has('debug')||query.has('studio'))window.__egghead={
    ready:true,focus:(id)=>{const s=exhibits.diagnostics().stations.find(s=>s.id===id);window.dispatchEvent(new CustomEvent('exhibit:focus',{detail:s}));},exhibits:()=>exhibits.diagnostics(),counts:nature.counts,frames:()=>records.slice(),motion:()=>({current,target,velocity,paused,audit,lost,raf,focusBlend,focusWanted,hidden:document.hidden}),replayMoment(){nature.replay(clock,current);},camera:()=>({position:camera.position.toArray(),quaternion:camera.quaternion.toArray(),progress:current}),
-   capture(value,time=4){audit=true;paused=true;touring=false;focusWanted=false;focusBlend=0;target=current=Math.max(0,Math.min(1,value));scrollTo({top:target*measure(),behavior:'instant'});velocity=0;clock=time;yaw=pitch=0;cancelAnimationFrame(raf);raf=0;updateCamera(camera,current,{portrait:innerWidth<700});applyExhibitFocus();nature.update(time,current);exhibits?.update(current);ocean.update(time);setUI();renderer.render(scene,camera);return {progress:current,triangles:renderer.info.render.triangles,calls:renderer.info.render.calls,memory:{...renderer.info.memory,programs:renderer.info.programs.length},camera:this.camera(),counts:nature.counts,...nature.diagnostics()};},
+   capture(value,time=4){audit=true;paused=true;touring=false;focusWanted=false;focusBlend=0;document.querySelector('#leave-exhibit').hidden=true;target=current=Math.max(0,Math.min(1,value));scrollTo({top:target*measure(),behavior:'instant'});velocity=0;clock=time;yaw=pitch=0;cancelAnimationFrame(raf);raf=0;updateCamera(camera,current,{portrait:innerWidth<700});applyExhibitFocus();nature.update(time,current);exhibits?.update(current);ocean.update(time);setUI();renderer.render(scene,camera);return {progress:current,triangles:renderer.info.render.triangles,calls:renderer.info.render.calls,memory:{...renderer.info.memory,programs:renderer.info.programs.length},camera:this.camera(),counts:nature.counts,...nature.diagnostics()};},
    resume(){audit=false;paused=false;sync();wake();},
    loseContext(){const ext=renderer.getContext().getExtension('WEBGL_lose_context');if(!ext)return false;ext.loseContext();setTimeout(()=>ext.restoreContext(),350);return true;},
    async exportGLB(){

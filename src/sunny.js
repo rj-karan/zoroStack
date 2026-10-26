@@ -65,5 +65,28 @@ export function createSunny(wind){
  const luffy=new T.Group();luffy.name='Luffy_On_Deck';luffy.position.set(0,3.15,4.1);ship.add(luffy);
  sphere(luffy,[0,.9,0],[.28,.42,.18],C.coral);sphere(luffy,[0,1.5,0],[.23,.28,.22],0xe7b384);cylinder(luffy,[0,1.73,0],.29,.16,C.yellow,.3,20);ring(luffy,[0,1.67,0],.38,.05,C.yellow);ring(luffy,[0,1.69,0],.29,.035,C.coral);
  for(const s of [-1,1]){rod(luffy,[s*.2,.65,0],[s*.2,.25,.1],.10,C.blue);rod(luffy,[s*.22,1.1,0],[s*.45,s>0?1.6:.65,.1],.065,0xe7b384);sphere(luffy,[s*.2,.17,.16],[.13,.08,.22],0x77523d);}
+ // Close-range ship fittings: framed portholes, copper fasteners, rigging
+ // blocks, rope coils, a capstan and stern lamps are separate 3D parts.
+ for(const side of [-1,1]){
+  for(const z of [-4.5,-2.5,-.5,1.5,3.5]){
+   const width=.18+Math.pow(Math.sin((z+6)/12*Math.PI),.58)*3.25;
+   const x=side*(width-.05),frame=ring(ship,[x,1.85,z],.23,.055,C.gold,'x',24,materials.metal);frame.rotation.y=side*.06;
+   sphere(ship,[x+side*.035,1.85,z],[.035,.17,.17],0x3994a9,materials.metal,12);
+   for(const dy of [-.28,.28])sphere(ship,[x+side*.02,1.85+dy,z],[.04,.04,.04],C.cream,materials.metal,8);
+  }
+  for(let z=-5;z<=5;z+=.5){const x=side*(.18+Math.pow(Math.sin((z+6)/12*Math.PI),.58)*3.15);sphere(ship,[x,2.65,z],[.035,.035,.035],C.gold,materials.metal,8);}
+  const lamp=new T.Group();lamp.position.set(side*3.1,4,-3.35);ship.add(lamp);
+  rod(lamp,[0,0,0],[0,.65,0],.045,C.gold);sphere(lamp,[0,.84,0],[.19,.24,.19],C.yellow,materials.glass,16);ring(lamp,[0,.65,0],.22,.035,C.gold);ring(lamp,[0,1.05,0],.22,.035,C.gold);
+  for(const z of [-2.8,2.7]){ring(ship,[side*2.45,3.17,z],.42,.026,0xcdbb8b,'y',32,wood);ring(ship,[side*2.45,3.19,z],.29,.026,0xcdbb8b,'y',32,wood);}
+ }
+ const winch=new T.Group();winch.name='Sunny_Deck_Capstan';winch.position.set(0,3.2,-1.7);ship.add(winch);
+ cylinder(winch,[0,.25,0],.38,.5,0x926c45,.48,24,wood);cylinder(winch,[0,.55,0],.52,.15,C.gold,.52,24,materials.metal);
+ for(let k=0;k<6;k++){const a=k*Math.PI/3;rod(winch,[Math.sin(a)*.22,.48,Math.cos(a)*.22],[Math.sin(a)*.77,.55,Math.cos(a)*.77],.055,0xa0784d,wood);sphere(winch,[Math.sin(a)*.77,.55,Math.cos(a)*.77],[.08,.08,.08],C.gold,materials.metal,10);}
+ for(const z of [-3.9,.8])for(const side of [-1,1]){
+  const x=side*2.3,y=z<0?10.4:13.8;
+  sphere(ship,[x,y,z],[.17,.22,.12],0x795b3d,wood,12);
+  ring(ship,[x,y,z+.12],.14,.035,C.gold,'z',16,materials.metal);
+  tube(ship,[[x,y,z],[side*3.5,y-3,z+1.2],[side*2.6,3.8,z+2.4]],.014,0x9b8562,14,wood);
+ }
  finishAssembly(ship);ship.traverse(o=>{if(o.isMesh)o.castShadow=false;});return ship;
 }

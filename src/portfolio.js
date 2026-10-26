@@ -1,6 +1,6 @@
 import * as T from '../assets/vendor/three.module.min.js';
 import {C,materials,add,sphere,cylinder,ring,rod,tube,roundedBox,label,batchWorld} from './geometry.js?v=4';
-import {exhibitStops} from './exhibit-route.js';
+import {exhibitStops} from './exhibit-route.js?v=11';
 
 export function safeUrl(value){
  try{const u=new URL(String(value||''),location.href);return value&&['https:','http:','mailto:'].includes(u.protocol)?u.href:null;}catch{return null;}
@@ -26,7 +26,7 @@ export async function createPortfolioWorld(world,{camera,canvas,wake,travel}){
   button.userData.dynamic=true;button.userData.action=action;button.userData.actionLabel=text;actions.push(button);return button;
  };
  function terminal(stop,entries){
-  const g=new T.Group();g.name=`EXHIBIT_${stop.id}`;g.position.set(...stop.position);g.scale.setScalar(.48);root.add(g);
+  const g=new T.Group();g.name=`EXHIBIT_${stop.id}`;g.position.set(...stop.position);g.scale.setScalar(stop.position[1]>100?1:.48);root.add(g);
   // Circular laboratory deck, visible feet, bolted enamel casing and cable loom.
   cylinder(g,[0,-.25,0],5.5,.5,C.cream,5.7,64);ring(g,[0,.02,0],5.4,.09,stop.color);
   for(const x of [-3.25,3.25]){add(g,roundedBox(.5,1.4,1,.12),C.navy,[x,.7,0]);cylinder(g,[x,.08,0],.65,.15,stop.color);}

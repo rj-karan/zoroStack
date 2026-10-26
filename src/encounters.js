@@ -49,9 +49,9 @@ export function createBattle(world,zoro){
 }
 
 export function createIronGiant(world){
- const root=new T.Group();root.name='EMET_ANCIENT_IRON_GIANT';root.position.set(43,1.7,-15);root.userData.dynamic=true;world.add(root);
- const contact=new T.Mesh(new T.PlaneGeometry(8,6),softContact());contact.rotation.x=-Math.PI/2;contact.position.set(43,1.78,-15);world.add(contact);
- const ruins=new T.Group();ruins.name='Emet_Ancient_Foundations';ruins.position.set(43,1.7,-15);world.add(ruins);
+ const root=new T.Group();root.name='EMET_ANCIENT_IRON_GIANT';root.position.set(230,1.7,-80);root.userData.dynamic=true;world.add(root);
+ const contact=new T.Mesh(new T.PlaneGeometry(8,6),softContact());contact.rotation.x=-Math.PI/2;contact.position.set(230,1.78,-80);world.add(contact);
+ const ruins=new T.Group();ruins.name='Emet_Ancient_Foundations';ruins.position.set(230,1.7,-80);world.add(ruins);
  for(let i=0;i<11;i++){const a=i*Math.PI*2/11,r=4.3+(i%3)*.35;add(ruins,roundedBox(1.6,.22,1.1,.13),i%2?0xa2ada3:0x88988c,[Math.sin(a)*r,-.02,Math.cos(a)*r],[1,1,1],[0,a+.2,0],materials.earth);for(let j=0;j<2;j++)sphere(ruins,[Math.sin(a)*r+j*.18,.10,Math.cos(a)*r],[.27,.06,.23],0x86a65c,materials.foliage,12);}
  for(const s of [-1,1]){cylinder(ruins,[s*3.7,.4,1.8],.5,.8,0x526b64,.6,16,materials.metal);ring(ruins,[s*3.7,.82,1.8],.45,.09,0xbd9e60);tube(ruins,[[s*3.7,.9,1.8],[s*4.2,1.4,1.0],[s*4.6,.4,-.5]],.11,0x677e65,12);}
  const rusty=new T.MeshStandardMaterial({vertexColors:true,roughness:.87,metalness:.35,normalMap:microNormal(81),normalScale:new T.Vector2(.65,.65)}),rust=0x9a6950,dark=0x4f5450,brass=0xb79858;

@@ -1,13 +1,13 @@
 import * as T from '../assets/vendor/three.module.min.js';
 import {C,materials,add,sphere,cylinder,ring,rod,tube,roundedBox,label,mergeBone} from './geometry.js?v=4';
-import {createSunny} from './sunny.js?v=10';
-import {createBattle,createIronGiant} from './encounters.js?v=4';
+import {createSunny} from './sunny.js?v=11';
+import {createBattle,createIronGiant} from './encounters.js?v=11';
 import {microNormal} from './assembly.js?v=4';
 
 export async function createAdventure(world,zoro,{low=false}={}){
  const wind={value:0},ship=createSunny(wind);world.add(ship);
  const wood=new T.MeshStandardMaterial({vertexColors:true,roughness:.82,normalMap:microNormal(11),normalScale:new T.Vector2(.35,.35)});
- const harbor=new T.Group();harbor.name='SUNNY_HARBOUR';world.add(harbor);
+ const harbor=new T.Group();harbor.name='SUNNY_HARBOUR';harbor.position.set(-265,0,23);world.add(harbor);
  const start=new T.Vector3(-30,1.80,26),end=new T.Vector3(-49,1.80,38),direction=end.clone().sub(start).normalize(),side=new T.Vector3(-direction.z,0,direction.x);
  for(let i=0;i<38;i++){const p=start.clone().lerp(end,i/37),board=add(harbor,roundedBox(5.0,.20,.55,.055),i%3?0xb58b59:0xc69a62,p.toArray(),[1,1,1],[0,Math.atan2(direction.x,direction.z),0],wood);}
  for(const sign of [-1,1]){
@@ -63,21 +63,21 @@ export async function createAdventure(world,zoro,{low=false}={}){
   const core=new T.Mesh(new T.ConeGeometry(.28,4.5,20),innerFlame);core.rotation.x=-Math.PI/2;core.position.z=-3.25;nozzle.add(core);
   for(let i=0;i<3;i++){const halo=new T.Mesh(new T.TorusGeometry(.7+i*.35,.07,6,24),blueFlame);halo.position.z=-2.1-i*1.25;nozzle.add(halo);}
  }
- const flightPath=new T.CatmullRomCurve3([[78,51,66],[56,48,82],[19,45,89],[-23,38,84],[-72,23,72],[-69,8,52],[-55,-2.8,37]].map(v=>new T.Vector3(...v)),false,'centripetal');
+ const flightPath=new T.CatmullRomCurve3([[295,95,230],[220,110,270],[100,135,285],[-65,120,285],[-230,72,220],[-325,35,150],[-320,-2.8,60]].map(v=>new T.Vector3(...v)),false,'centripetal');
  const trackingMatrix=new T.Matrix4(),trackingOrientation=new T.Quaternion(),trackingUp=new T.Vector3(0,1,0);
  let shipStart=0,u=0,shipState='airborne',replayingShip=false,fightState={},giantState={};
- return {replay(time,progress){if(progress<.225){shipStart=time;replayingShip=true;}else if(progress<.67)battle.replay(time);else giant.replay(time);},update(time,progress){
+ return {replay(time,progress){if(progress<.365){shipStart=time;replayingShip=true;}else if(progress<.67)battle.replay(time);else giant.replay(time);},update(time,progress){
   wind.value=time;
-  if(progress<.005||progress>.225)replayingShip=false;
-  const elapsed=Math.max(0,time-shipStart),base=T.MathUtils.smoothstep(progress,.012,.205),play=T.MathUtils.smoothstep(elapsed,0,7.5);
-  const replayWeight=T.MathUtils.smoothstep(progress,.012,.035)*(1-T.MathUtils.smoothstep(progress,.20,.225));u=replayingShip?T.MathUtils.lerp(base,play,replayWeight):base;
+  if(progress<.005||progress>.365)replayingShip=false;
+  const elapsed=Math.max(0,time-shipStart),base=T.MathUtils.smoothstep(progress,.018,.345),play=T.MathUtils.smoothstep(elapsed,0,7.5);
+  const replayWeight=T.MathUtils.smoothstep(progress,.012,.035)*(1-T.MathUtils.smoothstep(progress,.34,.365));u=replayingShip?T.MathUtils.lerp(base,play,replayWeight):base;
   const travel=T.MathUtils.smoothstep(u,0,1),point=flightPath.getPointAt(travel),heading=flightPath.getTangentAt(travel);
   ship.position.copy(point);ship.position.y+=Math.sin(time*1.3)*.18*(1-travel)+Math.sin(time*.8)*.10*travel;
   const yaw=Math.atan2(heading.x,heading.z);ship.rotation.set(.09*Math.sin(u*Math.PI)+Math.sin(time*.6)*.014, T.MathUtils.lerp(yaw,.62,T.MathUtils.smoothstep(u,.80,1)), -.22*Math.sin(Math.PI*u)+Math.sin(time*.8)*.012);
-  burst.visible=progress>.035&&progress<.145&&u<.84;
+  burst.visible=progress>.055&&progress<.235&&u<.84;
   if(burst.visible){burst.scale.setScalar(.86+.17*Math.sin(time*12));blueFlame.opacity=.52+.12*Math.sin(time*11);}
   shipState=u<.18?'approach':u<.65?'coup-de-burst':u<.94?'descending':u<.995?'splashdown':'afloat';
-  splash.position.set(-55,-2.40,37);splash.visible=u>.93;
+  splash.position.set(-320,-2.40,60);splash.visible=u>.93;
   waves.forEach((mesh,i)=>{const t=(time*.28+i/3)%1;mesh.scale.setScalar(2+t*9);mesh.position.y=.02*i;});foam.opacity=.55;
   let count=0;if(u>.92&&u<1){for(let i=0;i<28;i++){const a=i*2.4,t=(u-.92)/.08;dummy.position.set(Math.sin(a)*(2+t*5),Math.sin(t*Math.PI)*(1.5+i%4*.4),Math.cos(a)*(2+t*4));dummy.scale.set(.6,1.5,.6);dummy.updateMatrix();drops.setMatrixAt(count++,dummy.matrix);}}drops.count=count;drops.instanceMatrix.needsUpdate=true;
   battle.update(time,progress);giant.update(time,progress);fightState=battle.diagnostics();giantState=giant.diagnostics();turbines.forEach((o,i)=>o.rotation.z=time*(.22+i*.05));

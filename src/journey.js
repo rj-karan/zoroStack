@@ -1,30 +1,24 @@
 import * as T from '../assets/vendor/three.module.min.js';
-export const TOUR_SECONDS=125;
-import {exhibitStops} from './exhibit-route.js';
+export const TOUR_SECONDS=180;
+import {exhibitStops} from './exhibit-route.js?v=11';
 export const destinations=[{at:0,kicker:'EGGHEAD / FUTURE ISLAND',heading:'KARAN RJ',description:'A portfolio inside the world.',name:'Island overview',cta:'Meet Karan',next:.08},...exhibitStops.map((s,i)=>({at:s.at,kicker:s.zone,heading:s.title,description:s.zone,name:s.title,cta:'Next exhibit',next:exhibitStops[i+1]?.at??0}))];
+// The ship crosses the enlarged Fabriophase before the camera visits each
+// separate portfolio district at human scale.
 export const shots=[
- [0,[114,58,142],[24,33,31],48],
- [.03,[106,64,153],[50,48,72],47],
- [.065,[79,64,143],[50,47,75],47],
- [.10,[12,53,136],[3,42,65],47],
- [.12,[-23,53,132],[-40,32,74],47],
- [.145,[-57,34,111],[-60,25,67],46],
- [.18,[-83,22,84],[-58,11,44],45],
- [.22,[-56,11,60],[-47,5,33],46],
- [.30,[-18,10,45],[-20,6,20],48],
- [.37,[-32,11,30],[-24,7,1],48],
- [.44,[-9,10,35],[-10,6,8],48],
- [.51,[3,9,43],[5,5,22],48],
- [.545,[15,6.5,36],[10,4,24],44],
- [.58,[21,11,43],[20,7,15],48],
- [.65,[44,13,31],[30,8,2],48],
- [.72,[59,15,12],[42,9,-12],48],
- [.765,[55,34,35],[0,38,0],49],
- [.80,[36,62,41],[10,58,0],48],
- [.87,[16,62,47],[4,59,1],48],
- [.94,[-8,63,47],[-4,59,0],48],
- [1,[-38,64,43],[-7,58,-2],48]
+ [0,[465,258,570],[125,150,60],49],
+ [.04,[355,202,450],[220,145,170],48],
+ [.09,[265,175,420],[125,122,205],48],
+ [.15,[80,180,465],[5,135,185],47],
+ [.22,[-185,155,430],[-115,100,180],47],
+ [.29,[-345,92,255],[-300,46,138],47],
+ [.35,[-343,16,103],[-307,5,59],45]
 ];
+for(const stop of exhibitStops.slice(1)){
+ const [x,y,z]=stop.position,upper=y>100;
+ if(stop.id==='reports')shots.push([.855,[178,138,47],[150,115,0],48]);
+ if(upper)shots.push([stop.at,[x+28,y+42,z+70],[x,y+7,z],47]);
+ else shots.push([stop.at,[x+24,y+12,z+49],[x,y+3,z],47]);
+}
 const up=new T.Vector3(0,1,0),matrix=new T.Matrix4(),euler=new T.Euler(0,0,0,'YXZ');
 const keys=shots.map(([at,p,target,fov])=>{const position=new T.Vector3(...p),focus=new T.Vector3(...target),q=new T.Quaternion().setFromRotationMatrix(matrix.lookAt(position,focus,up));euler.setFromQuaternion(q,'YXZ');return {at,values:[...p,euler.y,euler.x,position.distanceTo(focus),fov]};});
 // Unwrap heading across +/- pi before interpolation. Keep roll exactly zero.
