@@ -2,7 +2,7 @@ import * as T from '../assets/vendor/three.module.min.js';
 import {mergeGeometries} from '../assets/vendor/utils/BufferGeometryUtils.js';
 import {C,materials,paint,add,sphere,cylinder,ring,rod,tube,roundedBox,label,batchWorld} from './geometry.js?v=4';
 import {createZoro} from './zoro.js?v=5';
-import {createAdventure} from './adventure.js?v=5';
+import {createAdventure} from './adventure.js?v=10';
 
 
 const tick=()=>new Promise(r=>setTimeout(r,0));

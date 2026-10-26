@@ -1,6 +1,6 @@
 import * as T from '../assets/vendor/three.module.min.js';
 import {C,materials,add,sphere,cylinder,ring,rod,tube,roundedBox,label,mergeBone} from './geometry.js?v=4';
-import {createSunny} from './sunny.js?v=5';
+import {createSunny} from './sunny.js?v=10';
 import {createBattle,createIronGiant} from './encounters.js?v=4';
 import {microNormal} from './assembly.js?v=4';
 
@@ -51,15 +51,35 @@ export async function createAdventure(world,zoro,{low=false}={}){
  const splash=new T.Group();splash.name='SUNNY_SPLASH';splash.userData.dynamic=true;world.add(splash);const foam=new T.MeshBasicMaterial({color:0xdffff7,transparent:true,opacity:.65,depthWrite:false});const waves=[];
  for(let i=0;i<3;i++){const mesh=new T.Mesh(new T.TorusGeometry(1,.035,4,64),foam);mesh.rotation.x=-Math.PI/2;splash.add(mesh);waves.push(mesh);}
  const drops=new T.InstancedMesh(new T.SphereGeometry(.13,7,4),new T.MeshBasicMaterial({color:0xe0ffff}),28);drops.userData.dynamicInsect=true;drops.frustumCulled=false;drops.count=0;splash.add(drops);const dummy=new T.Object3D();
+ // Coup de Burst is a real exhaust assembly attached to the Sunny's stern.
+ const burst=new T.Group();burst.name='COUP_DE_BURST';burst.position.set(0,2.5,-6.7);burst.visible=false;ship.add(burst);
+ const blueFlame=new T.MeshBasicMaterial({color:0x168ff1,transparent:true,opacity:.68,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide});
+ const innerFlame=new T.MeshBasicMaterial({color:0x86eaff,transparent:true,opacity:.72,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide});
+ for(const x of [-1.35,0,1.35]){
+  const nozzle=new T.Group();nozzle.position.set(x,0,0);burst.add(nozzle);
+  ring(nozzle,[0,0,-.25],.46,.1,C.navy,'z',24);
+  ring(nozzle,[0,0,-.38],.3,.045,C.cyan,'z',24);
+  const flame=new T.Mesh(new T.ConeGeometry(.7,6,24),blueFlame);flame.rotation.x=-Math.PI/2;flame.position.z=-3.8;nozzle.add(flame);
+  const core=new T.Mesh(new T.ConeGeometry(.28,4.5,20),innerFlame);core.rotation.x=-Math.PI/2;core.position.z=-3.25;nozzle.add(core);
+  for(let i=0;i<3;i++){const halo=new T.Mesh(new T.TorusGeometry(.7+i*.35,.07,6,24),blueFlame);halo.position.z=-2.1-i*1.25;nozzle.add(halo);}
+ }
+ const flightPath=new T.CatmullRomCurve3([[78,51,66],[56,48,82],[19,45,89],[-23,38,84],[-72,23,72],[-69,8,52],[-55,-2.8,37]].map(v=>new T.Vector3(...v)),false,'centripetal');
  const trackingMatrix=new T.Matrix4(),trackingOrientation=new T.Quaternion(),trackingUp=new T.Vector3(0,1,0);
  let shipStart=0,u=0,shipState='airborne',replayingShip=false,fightState={},giantState={};
- return {replay(time,progress){if(progress<.31){shipStart=time;replayingShip=true;}else if(progress<.67)battle.replay(time);else giant.replay(time);},update(time,progress){
-  wind.value=time;if(progress<.055||progress>.34)replayingShip=false;
-  const elapsed=Math.max(0,time-shipStart),base=T.MathUtils.smoothstep(progress,.075,.205),play=T.MathUtils.smoothstep(elapsed,0,6.3);const replayWeight=T.MathUtils.smoothstep(progress,.055,.075)*(1-T.MathUtils.smoothstep(progress,.31,.34));u=replayingShip?T.MathUtils.lerp(base,play,replayWeight):base;
-  const easing=1-Math.pow(1-u,2);ship.position.set(T.MathUtils.lerp(-68,-55,easing),T.MathUtils.lerp(28,-2.8,easing)+Math.sin(time*1.1)*.12*u, T.MathUtils.lerp(25,37,easing));ship.rotation.set(.24*(1-u)+Math.sin(time*.9)*.012*u,.62,-.10*(1-u)+Math.sin(time*.7)*.014*u);
-  shipState=u<.85?'descending':u<.99?'splashdown':'afloat';splash.position.set(-55,-2.40,37);splash.visible=u>.93;
+ return {replay(time,progress){if(progress<.225){shipStart=time;replayingShip=true;}else if(progress<.67)battle.replay(time);else giant.replay(time);},update(time,progress){
+  wind.value=time;
+  if(progress<.005||progress>.225)replayingShip=false;
+  const elapsed=Math.max(0,time-shipStart),base=T.MathUtils.smoothstep(progress,.012,.205),play=T.MathUtils.smoothstep(elapsed,0,7.5);
+  const replayWeight=T.MathUtils.smoothstep(progress,.012,.035)*(1-T.MathUtils.smoothstep(progress,.20,.225));u=replayingShip?T.MathUtils.lerp(base,play,replayWeight):base;
+  const travel=T.MathUtils.smoothstep(u,0,1),point=flightPath.getPointAt(travel),heading=flightPath.getTangentAt(travel);
+  ship.position.copy(point);ship.position.y+=Math.sin(time*1.3)*.18*(1-travel)+Math.sin(time*.8)*.10*travel;
+  const yaw=Math.atan2(heading.x,heading.z);ship.rotation.set(.09*Math.sin(u*Math.PI)+Math.sin(time*.6)*.014, T.MathUtils.lerp(yaw,.62,T.MathUtils.smoothstep(u,.80,1)), -.22*Math.sin(Math.PI*u)+Math.sin(time*.8)*.012);
+  burst.visible=progress>.035&&progress<.145&&u<.84;
+  if(burst.visible){burst.scale.setScalar(.86+.17*Math.sin(time*12));blueFlame.opacity=.52+.12*Math.sin(time*11);}
+  shipState=u<.18?'approach':u<.65?'coup-de-burst':u<.94?'descending':u<.995?'splashdown':'afloat';
+  splash.position.set(-55,-2.40,37);splash.visible=u>.93;
   waves.forEach((mesh,i)=>{const t=(time*.28+i/3)%1;mesh.scale.setScalar(2+t*9);mesh.position.y=.02*i;});foam.opacity=.55;
   let count=0;if(u>.92&&u<1){for(let i=0;i<28;i++){const a=i*2.4,t=(u-.92)/.08;dummy.position.set(Math.sin(a)*(2+t*5),Math.sin(t*Math.PI)*(1.5+i%4*.4),Math.cos(a)*(2+t*4));dummy.scale.set(.6,1.5,.6);dummy.updateMatrix();drops.setMatrixAt(count++,dummy.matrix);}}drops.count=count;drops.instanceMatrix.needsUpdate=true;
   battle.update(time,progress);giant.update(time,progress);fightState=battle.diagnostics();giantState=giant.diagnostics();turbines.forEach((o,i)=>o.rotation.z=time*(.22+i*.05));
- },frameCamera(camera,progress,{allowTracking=true}={}){battle.cull(camera);const weight=T.MathUtils.smoothstep(progress,.055,.105)*(1-T.MathUtils.smoothstep(progress,.25,.34));if(weight>0&&allowTracking){const focus=ship.position.clone().add(new T.Vector3(0,7,0));trackingMatrix.lookAt(camera.position,focus,trackingUp);trackingOrientation.setFromRotationMatrix(trackingMatrix);camera.quaternion.slerp(trackingOrientation,weight);camera.updateMatrixWorld();}},diagnostics(){return {shipState,shipDescent:u,shipPosition:ship.position.toArray(),...fightState,...giantState,outerDistrictBlocks:lots.length};}};
+ },frameCamera(camera,progress,{allowTracking=true}={}){battle.cull(camera);const weight=T.MathUtils.smoothstep(progress,.055,.105)*(1-T.MathUtils.smoothstep(progress,.25,.34));if(weight>0&&allowTracking){const focus=ship.position.clone().add(new T.Vector3(0,7,0));trackingMatrix.lookAt(camera.position,focus,trackingUp);trackingOrientation.setFromRotationMatrix(trackingMatrix);camera.quaternion.slerp(trackingOrientation,weight);camera.updateMatrixWorld();}},diagnostics(){return {shipState,shipDescent:u,shipPosition:ship.position.toArray(),burstVisible:burst.visible,...fightState,...giantState,outerDistrictBlocks:lots.length};}};
 }

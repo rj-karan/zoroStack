@@ -1,6 +1,6 @@
 # Karan RJ — Egghead portfolio
 
-An unofficial, independently authored One Piece Egghead world. The world takes priority: scroll through the Sunny harbour, Fabriophase, Zoro's promenade, Emet and Punk Records. Twelve small physical displays live beside those locations. Click a display to move closer; scroll or press Escape to return to the world.
+An unofficial, independently authored One Piece Egghead world. The world takes priority: scroll with the Sunny as it flies around the island, fires its Coup de Burst, lands at the harbour, then continues through Fabriophase, Zoro's promenade, Emet and Punk Records. Twelve small physical displays live beside those locations. Click a display to move closer; scroll or press Escape to return to the world.
 
 The setting is a stylized fan-art interpretation, not an exact reconstruction of every character and object in the arc. The current characters are Zoro in his Egghead clothing, S-Hawk, Emet and a small Luffy on the Sunny. The scene uses authored geometry, local Three.js and credited wood textures. There are no AI-generated image assets, photographic sky or scanned broadleaf trees in the running scene.
 

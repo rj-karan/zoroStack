@@ -1,9 +1,9 @@
 import './music.js?v=5';
-import {createPortfolioWorld} from './portfolio.js?v=9';
+import {createPortfolioWorld} from './portfolio.js?v=10';
 import * as T from '../assets/vendor/three.module.min.js';
 import {RoomEnvironment} from '../assets/vendor/environments/RoomEnvironment.js';
-import {createEgghead,createOcean} from './world.js?v=9';
-import {destinations,chapterIndex,TOUR_SECONDS,updateCamera,advanceJourney,cameraPose} from './journey.js?v=9';
+import {createEgghead,createOcean} from './world.js?v=10';
+import {destinations,chapterIndex,TOUR_SECONDS,updateCamera,advanceJourney,cameraPose} from './journey.js?v=10';
 
 const canvas=document.querySelector('#world'),loading=document.querySelector('#loading-copy'),enter=document.querySelector('#explore'),reduced=matchMedia('(prefers-reduced-motion: reduce)'),query=new URLSearchParams(location.search);
 let focusStop=null,focusBlend=0,focusWanted=false;
@@ -40,7 +40,7 @@ function draw(stamp){
  if(dirty||moving||!paused){
   focusBlend=T.MathUtils.lerp(focusBlend,focusWanted?1:0,1-Math.exp(-elapsed*8));
   const ratio=moving?Math.min(quality,1):quality;if(Math.abs(ratio-lastRatio)>.01){renderer.setPixelRatio(ratio);renderer.setSize(innerWidth,innerHeight,false);lastRatio=ratio;}
-  updateCamera(camera,current,{yaw,pitch,portrait:innerWidth<700});applyExhibitFocus();nature?.update(clock,Math.max(.24,current));exhibits?.update(current);ocean?.update(clock);setUI();
+  updateCamera(camera,current,{yaw,pitch,portrait:innerWidth<700});applyExhibitFocus();nature?.update(clock,current);exhibits?.update(current);ocean?.update(clock);setUI();
   const start=performance.now();renderer.render(scene,camera);const cost=performance.now()-start;lastPaint=stamp;canvas.dataset.triangles=renderer.info.render.triangles;canvas.dataset.drawCalls=renderer.info.render.calls;
   if(query.has('debug')||query.has('studio')){records.push({stamp,cost,triangles:renderer.info.render.triangles,calls:renderer.info.render.calls,ratio:lastRatio});if(records.length>300)records.shift();}
   if(cost>32&&!audit){slow++;if(slow>=30){quality=Math.max(.45,quality*.85);canvas.dataset.tier='low';slow=0;resize();}}else slow=Math.max(0,slow-1);
@@ -67,7 +67,7 @@ async function start(){
   canvas.dataset.state='ready';document.body.classList.add('is-ready');enter.disabled=false;loading.textContent='The island is ready.';
   if(query.has('debug')||query.has('studio'))window.__egghead={
    ready:true,focus:(id)=>{const s=exhibits.diagnostics().stations.find(s=>s.id===id);window.dispatchEvent(new CustomEvent('exhibit:focus',{detail:s}));},exhibits:()=>exhibits.diagnostics(),counts:nature.counts,frames:()=>records.slice(),motion:()=>({current,target,velocity,paused,audit,lost,raf,focusBlend,focusWanted,hidden:document.hidden}),replayMoment(){nature.replay(clock,current);},camera:()=>({position:camera.position.toArray(),quaternion:camera.quaternion.toArray(),progress:current}),
-   capture(value,time=4){audit=true;paused=true;touring=false;focusWanted=false;focusBlend=0;target=current=Math.max(0,Math.min(1,value));scrollTo({top:target*measure(),behavior:'instant'});velocity=0;clock=time;yaw=pitch=0;cancelAnimationFrame(raf);raf=0;updateCamera(camera,current,{portrait:innerWidth<700});applyExhibitFocus();nature.update(time,Math.max(.24,current));exhibits?.update(current);ocean.update(time);setUI();renderer.render(scene,camera);return {progress:current,triangles:renderer.info.render.triangles,calls:renderer.info.render.calls,memory:{...renderer.info.memory,programs:renderer.info.programs.length},camera:this.camera(),counts:nature.counts,...nature.diagnostics()};},
+   capture(value,time=4){audit=true;paused=true;touring=false;focusWanted=false;focusBlend=0;target=current=Math.max(0,Math.min(1,value));scrollTo({top:target*measure(),behavior:'instant'});velocity=0;clock=time;yaw=pitch=0;cancelAnimationFrame(raf);raf=0;updateCamera(camera,current,{portrait:innerWidth<700});applyExhibitFocus();nature.update(time,current);exhibits?.update(current);ocean.update(time);setUI();renderer.render(scene,camera);return {progress:current,triangles:renderer.info.render.triangles,calls:renderer.info.render.calls,memory:{...renderer.info.memory,programs:renderer.info.programs.length},camera:this.camera(),counts:nature.counts,...nature.diagnostics()};},
    resume(){audit=false;paused=false;sync();wake();},
    loseContext(){const ext=renderer.getContext().getExtension('WEBGL_lose_context');if(!ext)return false;ext.loseContext();setTimeout(()=>ext.restoreContext(),350);return true;},
    async exportGLB(){
