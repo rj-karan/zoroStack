@@ -1,9 +1,9 @@
 import './music.js?v=5';
-import {createPortfolioWorld} from './portfolio.js?v=11';
+import {createPortfolioWorld} from './portfolio.js?v=12';
 import * as T from '../assets/vendor/three.module.min.js';
 import {RoomEnvironment} from '../assets/vendor/environments/RoomEnvironment.js';
-import {createEgghead,createOcean} from './world.js?v=11';
-import {destinations,chapterIndex,TOUR_SECONDS,updateCamera,advanceJourney,cameraPose} from './journey.js?v=11';
+import {createEgghead,createOcean} from './world.js?v=12';
+import {destinations,chapterIndex,TOUR_SECONDS,updateCamera,advanceJourney,cameraPose} from './journey.js?v=12';
 
 const canvas=document.querySelector('#world'),loading=document.querySelector('#loading-copy'),enter=document.querySelector('#explore'),reduced=matchMedia('(prefers-reduced-motion: reduce)'),query=new URLSearchParams(location.search);
 let focusStop=null,focusBlend=0,focusWanted=false;

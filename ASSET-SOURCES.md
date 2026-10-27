@@ -4,10 +4,11 @@ The current world uses local Three.js 0.180.0 (MIT; `assets/vendor/three-LICENSE
 
 The previous Island Tree 01 GLBs, packed tree Blender source and photographic sky JPEG are retained locally as unused historical assets. They are no longer loaded and are excluded from this publication. All mentions of them in the historical notes below refer to the earlier revision.
 
-The enlarged island measures 295 × 237 world units in radius, 19.99 times the previous footprint area, with human and ship geometry kept at the same scale. `src/megaworld.js` adds 339 pod buildings, 85 towers, 138 outer palms, connected road rings and landmarks using instanced meshes. The latest route prioritizes the world and ship. Content surfaces are real meshes inside twelve smaller physical exhibits, with separate project, achievement, report, CVE, writing and contact locations. The city footprint was enlarged and a rear district added. This remains stylized fan art, not an exhaustive or exact canon replica.
+The current island has radii of 132 × 106 world units, one fifth of the land area of the previous 295 × 237 version. Human and ship geometry retain their authored scale. `src/megaworld.js` uses instanced geometry for 270 canopy clusters, 112 shoreline rocks, 39 palms and 33 scattered science pods. The prior road rings and dense repeated city grid were removed. The skyline is gathered inside a rocky green coastline under a broad cloud layer and Punk Records. Twelve physical exhibits retain separate project, achievement, report, CVE, writing and contact locations. This remains an independently authored 3D fan-art interpretation rather than a frame-perfect reproduction.
 
 Official reference sources consulted for this revision:
 - https://one-piece.com/story/egghead/index.html
+- https://images.everyeye.it/img-notizie/one-piece-saga-egghead-finita-eccovi-riassunto-restare-pari-v4-747200-1280x960.webp (anime still studied for the coast, cloud and upper lab silhouette; not included as a runtime asset)
 - https://one-piece.com/figure/71487/index.html
 - https://one-piece.com/character/Emet/index.html
 

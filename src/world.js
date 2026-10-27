@@ -2,8 +2,8 @@ import * as T from '../assets/vendor/three.module.min.js';
 import {mergeGeometries} from '../assets/vendor/utils/BufferGeometryUtils.js';
 import {C,materials,paint,add,sphere,cylinder,ring,rod,tube,roundedBox,label,batchWorld} from './geometry.js?v=4';
 import {createZoro} from './zoro.js?v=5';
-import {createAdventure} from './adventure.js?v=11';
-import {createMegaFabriophase} from './megaworld.js?v=11';
+import {createAdventure} from './adventure.js?v=12';
+import {createMegaFabriophase} from './megaworld.js?v=12';
 
 
 const tick=()=>new Promise(r=>setTimeout(r,0));
@@ -28,14 +28,14 @@ export async function createEgghead(scene,{low=false,onProgress=()=>{}}={}){
  }
  onProgress('Shaping the coastline…');
  // A solid sculpted island: sand shoulder, weathered cliff and a green crown.
- const vertices=[],indices=[],colours=[],uvs=[],levels=[[-5,.78,0xc7a883],[-3,1,0xd2bb92],[-.9,1.02,0xefd7a3],[.3,.99,0xffe9b0],[1.7,.93,0xb2d978]];
+ const vertices=[],indices=[],colours=[],uvs=[],levels=[[-19,.78,0x4b483d],[-16,.95,0x635c4b],[-10,1.0,0x77735a],[-4,1.02,0x555b45],[.4,1.0,0x3e6d41],[1.7,.91,0x5b913f]];
  for(let j=0;j<levels.length;j++)for(let i=0;i<=128;i++){
-  const a=i/128*Math.PI*2,[y,r,color]=levels[j],noise=1+.025*Math.sin(a*5)+.022*Math.cos(a*7),c=new T.Color(color);
-  vertices.push(Math.cos(a)*295*r*noise,y+Math.sin(a*5)*.12,Math.sin(a)*237*r*noise);colours.push(c.r,c.g,c.b);uvs.push(i/128,j/4);
+  const a=i/128*Math.PI*2,[y,r,color]=levels[j],noise=1+.055*Math.sin(a*5)+.038*Math.cos(a*11)+.024*Math.sin(a*19),c=new T.Color(color);
+  vertices.push(Math.cos(a)*132*r*noise,y+Math.sin(a*5)*.12,Math.sin(a)*106*r*noise);colours.push(c.r,c.g,c.b);uvs.push(i/128,j/(levels.length-1));
   if(j<levels.length-1&&i<128){const k=j*129+i;indices.push(k,k+129,k+1,k+1,k+129,k+130);}
  }
  const cliff=new T.BufferGeometry();cliff.setAttribute('position',new T.Float32BufferAttribute(vertices,3));cliff.setAttribute('color',new T.Float32BufferAttribute(colours,3));cliff.setAttribute('uv',new T.Float32BufferAttribute(uvs,2));cliff.setIndex(indices);cliff.computeVertexNormals();const cliffMesh=new T.Mesh(cliff,materials.earth);cliffMesh.receiveShadow=true;world.add(cliffMesh);
- add(world,new T.CylinderGeometry(265,265,.4,192),0xb9dd84,[0,1.5,0],[1,1,.803],[0,0,0],materials.earth);
+ add(world,new T.CylinderGeometry(120,120,.4,192),0x649948,[0,1.5,0],[1,1,.803],[0,0,0],materials.earth);
  const mega=createMegaFabriophase(world,{low});
  // Fine enamel promenades, not flat dirt. Inlaid stripes follow the curve.
  function road(points,width,color){
@@ -114,8 +114,8 @@ export async function createEgghead(scene,{low=false,onProgress=()=>{}}={}){
  }
  // Elevated support arches keep the routes visually grounded in the city.
  for(const [x,z,y] of [[-23,4,18],[-9,-2,18],[10,-2,16],[19,3,10]]){rod(world,[x,1.7,z],[x,y,z],.13,C.cream);ring(world,[x,y*.45,z],.29,.05,C.yellow);}
- const elevator=tube(world,[[1,22,-12],[-1,64,-13],[-12,112,-9],[-23,168,-3],[-19,215,0]],.13,C.gold,90).curve;
- for(const off of [-.3,.3])tube(world,[[1+off,22,-12],[-1+off,64,-13],[-12+off,112,-9],[-23+off,168,-3],[-19+off,215,0]],.055,C.cream,90);
+ const elevator=tube(world,[[1,22,-12],[-1,45,-13],[-7,68,-9],[-12,91,-3],[-10,108,0]],.13,C.gold,90).curve;
+ for(const off of [-.3,.3])tube(world,[[1+off,22,-12],[-1+off,45,-13],[-7+off,68,-9],[-12+off,91,-3],[-10+off,108,0]],.055,C.cream,90);
  const lift=new T.Group();lift.name='Cloud_Elevator';lift.userData.dynamic=true;world.add(lift);sphere(lift,[0,0,0],[.65,.55,.65],C.white);ring(lift,[0,0,0],.72,.10,C.pink);moving.push({group:lift,curve:elevator,speed:.015,phase:.45});
  // Tighter architectural streets behind the large landmarks. These use slim,
  // bevelled tower silhouettes rather than repeating the spherical pod shape.
@@ -184,18 +184,18 @@ export async function createEgghead(scene,{low=false,onProgress=()=>{}}={}){
  await tick();onProgress('Forming the island clouds…');
  // One giant cloud platform, with the reference's flat blue equatorial collar.
  const cloud=new T.Group();cloud.name='Island_Cloud_Labophase';world.add(cloud);
- cloud.scale.setScalar(4.2);
- sphere(cloud,[0,46.5,-2],[31,4.7,24],0xf8ffff,materials.cloud,40);
- for(let i=0;i<58;i++){
-  const a=i*2.39996,r=Math.sqrt((i+.5)/58),x=Math.cos(a)*r*31,z=Math.sin(a)*r*23-2,y=46.5+Math.sin(i*1.7)*2.0;
-  if(z>6&&x>-22&&x<22)continue; // clear the visitor terrace in front of Punk Records
-  const size=4+random()*3.0;cloudPuff(cloud,[x,y,z],[size*1.35,size*.78,size],i%7===0?0xe4f6fb:0xf8ffff,36);
+ cloud.scale.set(3.0,2.1,3.0);
+ sphere(cloud,[0,45.4,-2],[29,3.4,21],0xe9f9fc,materials.cloud,40);
+ for(let i=0;i<88;i++){
+  const a=i*2.39996,r=Math.sqrt((i+.5)/88),x=Math.cos(a)*r*31,z=Math.sin(a)*r*23-2,y=46.5+Math.sin(i*1.7)*3.2;
+  if(z>1&&x>-25&&x<25)continue; // clear the visitor terrace in front of Punk Records
+  const size=6.2+random()*5.7;cloudPuff(cloud,[x,y,z],[size*1.35,size*.78,size],i%4===0?0xc8e6f0:i%3===0?0xe0f3f8:0xf8ffff,36);
  }
  for(let i=0;i<6;i++)sphere(cloud,[Math.sin(i*.9)*1.2,39-i*1.8,-2],[5-i*.65,2,4-i*.5],0xf0fcff,materials.cloud,20);
- for(const y of [45.7,46.35]){const r=ring(world,[0,y*4.2,-8.4],35.3*4.2,.11*4.2,0x3484ec,'y',128);r.scale.z=.80;}
- label(world,'= 066 =',[0,46.15*4.2,26.5*4.2],23.1,5.9,{color:'#3275d4',background:'#f6ffff',font:'bold 85px Arial'});
+ for(const y of [45.7,46.35]){const r=ring(world,[0,y*2.1,-4.2],35.3*3.0,.11*3.0,0x3484ec,'y',128);r.scale.z=.80;}
+ label(world,'= 066 =',[0,46.15*2.1,26.5*3.0],16.5,3.0,{color:'#3275d4',background:'#f6ffff',font:'bold 85px Arial'});
  // Top island. The dome is a cracked eggshell, not a generic opaque sphere.
- const lab=new T.Group();lab.name='PUNK_RECORDS_LABOPHASE';lab.position.set(0,51*4.2,-8.4);lab.scale.setScalar(4.2);world.add(lab);
+ const lab=new T.Group();lab.name='PUNK_RECORDS_LABOPHASE';lab.position.set(0,51*2.1,-4.2);lab.scale.setScalar(2.1);world.add(lab);
  cylinder(lab,[0,.2,0],22,.7,C.cream,22,80);ring(lab,[0,.55,0],21.8,.13,C.mint,'y',96);
  cylinder(lab,[0,3.4,0],12.5,5.6,C.navy,13.2,64);cylinder(lab,[0,1.9,0],13.6,.75,C.white,13.6,64);
  for(let i=0;i<14;i++){const a=i*Math.PI*2/14,box=add(lab,roundedBox(1.6,1,.12,.08),C.cyan,[Math.sin(a)*12.65,4.3,Math.cos(a)*12.65]);box.rotation.y=a;}
@@ -238,7 +238,7 @@ export async function createEgghead(scene,{low=false,onProgress=()=>{}}={}){
 }
 
 export function createOcean(scene){
- const time={value:0},material=new T.ShaderMaterial({uniforms:{time},vertexShader:`varying vec3 vWorld;uniform float time;void main(){vec3 p=position;p.z+=.08*sin(p.x*.23+time*.7)*cos(p.y*.19-time*.5);vWorld=(modelMatrix*vec4(p,1.)).xyz;gl_Position=projectionMatrix*viewMatrix*vec4(vWorld,1.);}`,fragmentShader:`varying vec3 vWorld;uniform float time;void main(){vec2 p=vWorld.xz;float wave=sin(p.x*.57+sin(p.y*.3)+time*.6)*cos(p.y*.45-time*.4);float rip=pow(max(0.,sin(p.x*1.6+p.y*1.1+wave+time*.35)),18.);float island=length(p/vec2(295.,237.));vec3 colour=mix(vec3(.025,.30,.46),vec3(.07,.58,.57),exp(-max(0.,island-1.)*.8));float foam=1.-smoothstep(.015,.065,abs(island-(1.04+.006*sin(time+p.x*.4))));colour=mix(colour,vec3(.91,.99,.89),foam*.7);colour+=rip*.065;float haze=1.-exp(-length(vWorld-cameraPosition)*.0012);colour=mix(colour,vec3(.68,.87,.94),haze);gl_FragColor=vec4(colour,1.);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>}`});
+ const time={value:0},material=new T.ShaderMaterial({uniforms:{time},vertexShader:`varying vec3 vWorld;uniform float time;void main(){vec3 p=position;p.z+=.08*sin(p.x*.23+time*.7)*cos(p.y*.19-time*.5);vWorld=(modelMatrix*vec4(p,1.)).xyz;gl_Position=projectionMatrix*viewMatrix*vec4(vWorld,1.);}`,fragmentShader:`varying vec3 vWorld;uniform float time;void main(){vec2 p=vWorld.xz;float wave=sin(p.x*.57+sin(p.y*.3)+time*.6)*cos(p.y*.45-time*.4);float rip=pow(max(0.,sin(p.x*1.6+p.y*1.1+wave+time*.35)),18.);float island=length(p/vec2(132.,106.));vec3 colour=mix(vec3(.025,.30,.46),vec3(.07,.58,.57),exp(-max(0.,island-1.)*.8));float foam=1.-smoothstep(.015,.065,abs(island-(1.04+.006*sin(time+p.x*.4))));colour=mix(colour,vec3(.91,.99,.89),foam*.7);colour+=rip*.065;float haze=1.-exp(-length(vWorld-cameraPosition)*.0012);colour=mix(colour,vec3(.68,.87,.94),haze);gl_FragColor=vec4(colour,1.);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>}`});
  material.uniforms.skyTop={value:new T.Color(0x219ce9)};material.uniforms.skyBottom={value:new T.Color(0xb4e9f8)};material.toneMapped=false;
  material.fragmentShader=material.fragmentShader.replace('varying vec3 vWorld;','uniform vec3 skyTop;uniform vec3 skyBottom;varying vec3 vWorld;').replace('float haze=1.-exp(-length(vWorld-cameraPosition)*.0012);colour=mix(colour,vec3(.68,.87,.94),haze);','float haze=smoothstep(110.,420.,length(vWorld-cameraPosition));float skyHeight=clamp(.65+normalize(vWorld-cameraPosition).y*1.1,.15,1.);colour=mix(colour,mix(skyBottom,skyTop,skyHeight),haze);').replace('#include <tonemapping_fragment>','');
  const ocean=new T.Mesh(new T.PlaneGeometry(3000,3000,64,64),material);ocean.name='Single_Pass_Ocean';ocean.rotation.x=-Math.PI/2;ocean.position.y=-2.5;scene.add(ocean);return {update(t){time.value=t;}};

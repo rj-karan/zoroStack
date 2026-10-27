@@ -1,23 +1,23 @@
 import * as T from '../assets/vendor/three.module.min.js';
 export const TOUR_SECONDS=180;
-import {exhibitStops} from './exhibit-route.js?v=11';
+import {exhibitStops} from './exhibit-route.js?v=12';
 export const destinations=[{at:0,kicker:'EGGHEAD / FUTURE ISLAND',heading:'KARAN RJ',description:'A portfolio inside the world.',name:'Island overview',cta:'Meet Karan',next:.08},...exhibitStops.map((s,i)=>({at:s.at,kicker:s.zone,heading:s.title,description:s.zone,name:s.title,cta:'Next exhibit',next:exhibitStops[i+1]?.at??0}))];
 // The ship crosses the enlarged Fabriophase before the camera visits each
 // separate portfolio district at human scale.
 export const shots=[
- [0,[465,258,570],[125,150,60],49],
- [.04,[355,202,450],[220,145,170],48],
- [.09,[265,175,420],[125,122,205],48],
- [.15,[80,180,465],[5,135,185],47],
- [.22,[-185,155,430],[-115,100,180],47],
- [.29,[-345,92,255],[-300,46,138],47],
- [.35,[-343,16,103],[-307,5,59],45]
+ [0,[200,105,280],[0,65,0],48],
+ [.04,[191,142,270],[45,78,80],48],
+ [.09,[155,130,230],[30,80,100],48],
+ [.15,[36,145,228],[0,75,80],47],
+ [.22,[-98,115,211],[-45,65,68],47],
+ [.29,[-174,62,139],[-138,24,79],47],
+ [.35,[-158,15,88],[-123,5,46],45]
 ];
 for(const stop of exhibitStops.slice(1)){
  const [x,y,z]=stop.position,upper=y>100;
- if(stop.id==='reports')shots.push([.855,[178,138,47],[150,115,0],48]);
- if(upper)shots.push([stop.at,[x+28,y+42,z+70],[x,y+7,z],47]);
- else shots.push([stop.at,[x+24,y+12,z+49],[x,y+3,z],47]);
+ if(stop.id==='reports')shots.push([.855,[93,110,30],[55,87,0],48]);
+ if(upper)shots.push([stop.at,[x+17,y+23,z+39],[x,y+7,z],47]);
+ else shots.push([stop.at,[x+17,y+10,z+34],[x,y+3,z],47]);
 }
 const up=new T.Vector3(0,1,0),matrix=new T.Matrix4(),euler=new T.Euler(0,0,0,'YXZ');
 const keys=shots.map(([at,p,target,fov])=>{const position=new T.Vector3(...p),focus=new T.Vector3(...target),q=new T.Quaternion().setFromRotationMatrix(matrix.lookAt(position,focus,up));euler.setFromQuaternion(q,'YXZ');return {at,values:[...p,euler.y,euler.x,position.distanceTo(focus),fov]};});
