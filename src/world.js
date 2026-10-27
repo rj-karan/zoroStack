@@ -2,9 +2,10 @@ import * as T from '../assets/vendor/three.module.min.js';
 import {mergeGeometries} from '../assets/vendor/utils/BufferGeometryUtils.js';
 import {C,materials,paint,add,sphere,cylinder,ring,rod,tube,roundedBox,label,batchWorld} from './geometry.js?v=4';
 import {createZoro} from './zoro.js?v=5';
-import {createAdventure} from './adventure.js?v=13';
-import {createMegaFabriophase} from './megaworld.js?v=13';
+import {createAdventure} from './adventure.js?v=14';
+import {createMegaFabriophase,ISLAND_RADII} from './megaworld.js?v=14';
 import {createSeaFleet} from './fleet.js?v=13';
+import {createEggheadMachines} from './creatures.js?v=14';
 
 
 const tick=()=>new Promise(r=>setTimeout(r,0));
@@ -32,7 +33,7 @@ export async function createEgghead(scene,{low=false,onProgress=()=>{}}={}){
  const vertices=[],indices=[],colours=[],uvs=[],levels=[[-23,.68,0x343f3d],[-20,.86,0x474b42],[-13,.98,0x746958],[-5,1.02,0x5b5947],[.4,1.0,0x356541],[1.7,.91,0x46783a]];
  for(let j=0;j<levels.length;j++)for(let i=0;i<=128;i++){
   const a=i/128*Math.PI*2,[y,r,color]=levels[j],noise=1+.055*Math.sin(a*5)+.038*Math.cos(a*11)+.024*Math.sin(a*19),c=new T.Color(color);
-  vertices.push(Math.cos(a)*132*r*noise,y+Math.sin(a*5)*.12,Math.sin(a)*106*r*noise);colours.push(c.r,c.g,c.b);uvs.push(i/128,j/(levels.length-1));
+  vertices.push(Math.cos(a)*ISLAND_RADII.x*r*noise,y+Math.sin(a*5)*.12,Math.sin(a)*ISLAND_RADII.z*r*noise);colours.push(c.r,c.g,c.b);uvs.push(i/128,j/(levels.length-1));
   if(j<levels.length-1&&i<128){const k=j*129+i;indices.push(k,k+129,k+1,k+1,k+129,k+130);}
  }
  const cliff=new T.BufferGeometry();cliff.setAttribute('position',new T.Float32BufferAttribute(vertices,3));cliff.setAttribute('color',new T.Float32BufferAttribute(colours,3));cliff.setAttribute('uv',new T.Float32BufferAttribute(uvs,2));cliff.setIndex(indices);cliff.computeVertexNormals();const cliffMesh=new T.Mesh(cliff,materials.earth);cliffMesh.receiveShadow=true;world.add(cliffMesh);
@@ -41,9 +42,9 @@ export async function createEgghead(scene,{low=false,onProgress=()=>{}}={}){
  for(let i=0;i<78;i++){
   const a=(i+.23*Math.sin(i*2.7))/78*Math.PI*2,n=1+.055*Math.sin(a*5)+.038*Math.cos(a*11)+.024*Math.sin(a*19);
   for(const [r1,y1,r2,y2] of [[.97,-16,1.02,-8],[1.02,-8,1.0,.25]]){
-   seamPoints.push(Math.cos(a)*132*r1*n,y1,Math.sin(a)*106*r1*n,Math.cos(a)*132*r2*n,y2,Math.sin(a)*106*r2*n);
+   seamPoints.push(Math.cos(a)*ISLAND_RADII.x*r1*n,y1,Math.sin(a)*ISLAND_RADII.z*r1*n,Math.cos(a)*ISLAND_RADII.x*r2*n,y2,Math.sin(a)*ISLAND_RADII.z*r2*n);
   }
-  if(i%3===0){const x=Math.cos(a)*132*n,z=Math.sin(a)*106*n;
+  if(i%3===0){const x=Math.cos(a)*ISLAND_RADII.x*n,z=Math.sin(a)*ISLAND_RADII.z*n;
    tube(world,[[x*.99,1.5,z*.99],[x,0,z],[x*1.006,-3.8,z*1.006]],.045,i%2?0x2a653d:0x467c46,10,materials.foliage);
   }
  }
@@ -53,7 +54,7 @@ export async function createEgghead(scene,{low=false,onProgress=()=>{}}={}){
  const crownPositions=[],crownColours=[],crownUV=[],crownIndices=[],shoreNoise=a=>1+.055*Math.sin(a*5)+.038*Math.cos(a*11)+.024*Math.sin(a*19);
  for(let k=0;k<=8;k++)for(let i=0;i<=128;i++){
   const a=i/128*Math.PI*2,t=k/8,n=shoreNoise(a),r=.91*t;
-  crownPositions.push(Math.cos(a)*132*r*n,1.48+.22*t+.12*Math.sin(a*5)*t,Math.sin(a)*106*r*n);
+  crownPositions.push(Math.cos(a)*ISLAND_RADII.x*r*n,1.48+.22*t+.12*Math.sin(a*5)*t,Math.sin(a)*ISLAND_RADII.z*r*n);
   crownUV.push(.5+Math.cos(a)*r*n/2,.5+Math.sin(a)*r*n/2);
   const c=new T.Color().setHex(k>6?0x3e733e:k>3?0x508441:0x5d8d46);c.multiplyScalar(.92+.08*Math.sin(a*7+k));crownColours.push(c.r,c.g,c.b);
   if(k<8&&i<128){const j=k*129+i;crownIndices.push(j,j+1,j+129,j+1,j+130,j+129);}
@@ -208,7 +209,7 @@ export async function createEgghead(scene,{low=false,onProgress=()=>{}}={}){
  await tick();onProgress('Forming the island clouds…');
  // One giant cloud platform, with the reference's flat blue equatorial collar.
  const cloud=new T.Group();cloud.name='Island_Cloud_Labophase';world.add(cloud);
- cloud.scale.set(3.0,2.1,3.0);
+ cloud.scale.set(3.7,2.1,3.7);
  sphere(cloud,[0,45.4,-2],[29,3.4,21],0xe9f9fc,materials.cloud,40);
  for(let i=0;i<216;i++){
   const a=i*2.39996,r=Math.sqrt((i+.5)/216),x=Math.cos(a)*r*31,z=Math.sin(a)*r*23-2,y=46.5+Math.sin(i*1.7)*3.2;
@@ -216,8 +217,8 @@ export async function createEgghead(scene,{low=false,onProgress=()=>{}}={}){
   const size=3.2+random()*5.1;cloudPuff(cloud,[x,y,z],[size*1.35,size*.84,size],i%5===0?0xb7ddeb:i%3===0?0xdceff7:0xf8ffff,24);
  }
  for(let i=0;i<12;i++)cloudPuff(cloud,[Math.sin(i*1.1)*2.1,40-i*1.55,-2+Math.cos(i*.75)*1.6],[5-i*.24,2.3-i*.07,4.5-i*.19],i%3?0xe9f7fa:0xcce5ee,20);
- for(const y of [45.7,46.35]){const r=ring(world,[0,y*2.1,-4.2],35.3*3.0,.11*3.0,0x3484ec,'y',128);r.scale.z=.80;}
- label(world,'= 066 =',[0,46.15*2.1,26.5*3.0],16.5,3.0,{color:'#3275d4',background:'#f6ffff',font:'bold 85px Arial'});
+ for(const y of [45.7,46.35]){const r=ring(world,[0,y*2.1,-4.2],35.3*3.7,.11*3.7,0x3484ec,'y',128);r.scale.z=.80;}
+ label(world,'= 066 =',[0,46.15*2.1,26.5*3.7],20.3,3.0,{color:'#3275d4',background:'#f6ffff',font:'bold 85px Arial'});
  // Top island. The dome is a cracked eggshell, not a generic opaque sphere.
  const lab=new T.Group();lab.name='PUNK_RECORDS_LABOPHASE';lab.position.set(0,51*2.1,-4.2);lab.scale.setScalar(2.1);world.add(lab);
  cylinder(lab,[0,.2,0],22,.7,C.cream,22,80);ring(lab,[0,.55,0],21.8,.13,C.mint,'y',96);
@@ -253,6 +254,7 @@ export async function createEgghead(scene,{low=false,onProgress=()=>{}}={}){
  await tick();onProgress('Polishing the architecture…');
  onProgress('Choreographing the Sunny and sword fight…');const adventure=await createAdventure(world,zoro,{low});adventure.update(0,0);
  onProgress('Positioning the naval blockade…');const fleet=createSeaFleet(world,{low});
+ onProgress('Bringing Egghead’s machines to life…');const machines=createEggheadMachines(world,{low});machines.update(0);
  const authoring=new URLSearchParams(location.search).has('studio')?world.clone(true):null;
  const batched=await batchWorld(world);
  // Clouds in the distance are separate from the giant landmark cloud.
@@ -262,11 +264,11 @@ export async function createEgghead(scene,{low=false,onProgress=()=>{}}={}){
   for(let j=0;j<5;j++)cloudPuff(distant,[x+j*10,y+Math.sin(j*1.7)*5,z+j*3],[18+random()*11,7+random()*7,11+random()*11],j%3?0xeaf9fe:0xcbeaf4,20);
  }
  await batchWorld(distant);
- return {world,authoring,zoro,replay:(time,progress)=>adventure.replay(time,progress),frameCamera:(camera,progress,options)=>adventure.frameCamera(camera,progress,options),diagnostics:()=>adventure.diagnostics(),counts:{palms:palmPositions.length,...mega,...fleet,...batched},update(time,progress=0){clock.value=time;zoro.update(time);adventure.update(time,progress);for(const {group,curve,speed,phase} of moving){const t=(time*speed+phase)%1;group.position.copy(curve.getPointAt(t));group.quaternion.setFromUnitVectors(new T.Vector3(0,0,1),curve.getTangentAt(t));}},dispose(){const geometries=new Set(),mats=new Set(),maps=new Set();scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of [].concat(o.material||[]))mats.add(m);});geometries.forEach(g=>g.dispose());mats.forEach(m=>{for(const v of Object.values(m))if(v?.isTexture)maps.add(v);m.dispose();});maps.forEach(t=>t.dispose());}};
+ return {world,authoring,zoro,replay:(time,progress)=>adventure.replay(time,progress),frameCamera:(camera,progress,options)=>adventure.frameCamera(camera,progress,options),diagnostics:()=>({...adventure.diagnostics(),...machines.diagnostics()}),counts:{palms:palmPositions.length,...mega,...fleet,...machines.counts,...batched},update(time,progress=0){clock.value=time;zoro.update(time);adventure.update(time,progress);machines.update(time);for(const {group,curve,speed,phase} of moving){const t=(time*speed+phase)%1;group.position.copy(curve.getPointAt(t));group.quaternion.setFromUnitVectors(new T.Vector3(0,0,1),curve.getTangentAt(t));}},dispose(){const geometries=new Set(),mats=new Set(),maps=new Set();scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of [].concat(o.material||[]))mats.add(m);});geometries.forEach(g=>g.dispose());mats.forEach(m=>{for(const v of Object.values(m))if(v?.isTexture)maps.add(v);m.dispose();});maps.forEach(t=>t.dispose());}};
 }
 
 export function createOcean(scene){
- const time={value:0},material=new T.ShaderMaterial({uniforms:{time},vertexShader:`varying vec3 vWorld;uniform float time;void main(){vec3 p=position;p.z+=.08*sin(p.x*.23+time*.7)*cos(p.y*.19-time*.5);vWorld=(modelMatrix*vec4(p,1.)).xyz;gl_Position=projectionMatrix*viewMatrix*vec4(vWorld,1.);}`,fragmentShader:`varying vec3 vWorld;uniform float time;void main(){vec2 p=vWorld.xz;float wave=sin(p.x*.57+sin(p.y*.3)+time*.6)*cos(p.y*.45-time*.4);float rip=pow(max(0.,sin(p.x*1.6+p.y*1.1+wave+time*.35)),18.);float island=length(p/vec2(132.,106.));vec3 colour=mix(vec3(.025,.30,.46),vec3(.07,.58,.57),exp(-max(0.,island-1.)*.8));float foam=1.-smoothstep(.015,.065,abs(island-(1.04+.006*sin(time+p.x*.4))));colour=mix(colour,vec3(.91,.99,.89),foam*.7);colour+=rip*.065;float haze=1.-exp(-length(vWorld-cameraPosition)*.0012);colour=mix(colour,vec3(.68,.87,.94),haze);gl_FragColor=vec4(colour,1.);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>}`});
+ const time={value:0},material=new T.ShaderMaterial({uniforms:{time},vertexShader:`varying vec3 vWorld;uniform float time;void main(){vec3 p=position;p.z+=.08*sin(p.x*.23+time*.7)*cos(p.y*.19-time*.5);vWorld=(modelMatrix*vec4(p,1.)).xyz;gl_Position=projectionMatrix*viewMatrix*vec4(vWorld,1.);}`,fragmentShader:`varying vec3 vWorld;uniform float time;void main(){vec2 p=vWorld.xz;float wave=sin(p.x*.57+sin(p.y*.3)+time*.6)*cos(p.y*.45-time*.4);float rip=pow(max(0.,sin(p.x*1.6+p.y*1.1+wave+time*.35)),18.);float island=length(p/vec2(${ISLAND_RADII.x}.,${ISLAND_RADII.z}.));vec3 colour=mix(vec3(.025,.30,.46),vec3(.07,.58,.57),exp(-max(0.,island-1.)*.8));float foam=1.-smoothstep(.015,.065,abs(island-(1.04+.006*sin(time+p.x*.4))));colour=mix(colour,vec3(.91,.99,.89),foam*.7);colour+=rip*.065;float haze=1.-exp(-length(vWorld-cameraPosition)*.0012);colour=mix(colour,vec3(.68,.87,.94),haze);gl_FragColor=vec4(colour,1.);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>}`});
  material.uniforms.skyTop={value:new T.Color(0x219ce9)};material.uniforms.skyBottom={value:new T.Color(0xb4e9f8)};material.toneMapped=false;
  material.fragmentShader=material.fragmentShader.replace('varying vec3 vWorld;','uniform vec3 skyTop;uniform vec3 skyBottom;varying vec3 vWorld;').replace('float haze=1.-exp(-length(vWorld-cameraPosition)*.0012);colour=mix(colour,vec3(.68,.87,.94),haze);','float haze=smoothstep(110.,420.,length(vWorld-cameraPosition));float skyHeight=clamp(.65+normalize(vWorld-cameraPosition).y*1.1,.15,1.);colour=mix(colour,mix(skyBottom,skyTop,skyHeight),haze);').replace('#include <tonemapping_fragment>','');
  const ocean=new T.Mesh(new T.PlaneGeometry(3000,3000,64,64),material);ocean.name='Single_Pass_Ocean';ocean.rotation.x=-Math.PI/2;ocean.position.y=-17.5;scene.add(ocean);return {update(t){time.value=t;}};

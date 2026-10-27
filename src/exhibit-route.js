@@ -1,6 +1,6 @@
 // Each stop is a real location. Screens remain in world space while the camera travels.
 export const exhibitStops = [
- {id:'about',at:.35,title:'Karan RJ',zone:'Arrival / the researcher',position:[-116,2,42],color:0x25c7a9},
+ {id:'about',at:.35,title:'Karan RJ',zone:'Arrival / the researcher',position:[-145,2,42],color:0x25c7a9},
  {id:'project-0',at:.42,title:'RUZZ',zone:'01 / Security tooling',position:[-88,2,53],color:0x19bde6},
  {id:'project-1',at:.49,title:'ZORIX',zone:'02 / Defense validation',position:[-65,2,77],color:0x25c7a9},
  {id:'project-2',at:.56,title:'CRISPR',zone:'03 / Risk engineering',position:[-29,2,87],color:0xef739b},
