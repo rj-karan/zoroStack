@@ -77,7 +77,8 @@ try {
   const district=await evaluate('window.__egghead.counts');
   assert.ok(district.pods>=25&&district.coastalCanopies>150&&district.cliffRocks>100&&district.palms>30);
   assert.ok(district.warships>=5&&district.pirateShips>=1);
-  assert.ok(district.grassClumps>2500&&district.mossPatches>300&&district.leafDetails>4000&&district.forestTrunks>300&&district.understoryLeaves>3000);
+  assert.ok(district.grassClumps>2500&&district.mossPatches>300&&district.leafDetails>3000&&district.forestTrunks>280&&district.understoryLeaves>3000);
+  assert.ok(district.giantPalms>35&&district.spreadingTrees>70&&district.umbrellaTrees>70&&district.youngTrees>70);
   assert.ok(district.seaBeasts>=2&&district.serviceRobots>=4&&district.vegaForce===1);
   const stations=await evaluate('window.__egghead.exhibits().stations');
   const approach=await evaluate('window.__egghead.capture(0)');

@@ -2,7 +2,7 @@ import './music.js?v=5';
 import {createPortfolioWorld} from './portfolio.js?v=13';
 import * as T from '../assets/vendor/three.module.min.js';
 import {RoomEnvironment} from '../assets/vendor/environments/RoomEnvironment.js';
-import {createEgghead,createOcean} from './world.js?v=15';
+import {createEgghead,createOcean} from './world.js?v=16';
 import {destinations,chapterIndex,TOUR_SECONDS,updateCamera,advanceJourney,cameraPose} from './journey.js?v=14';
 
 const canvas=document.querySelector('#world'),loading=document.querySelector('#loading-copy'),enter=document.querySelector('#explore'),reduced=matchMedia('(prefers-reduced-motion: reduce)'),query=new URLSearchParams(location.search);
