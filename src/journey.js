@@ -1,16 +1,17 @@
 import * as T from '../assets/vendor/three.module.min.js';
 export const TOUR_SECONDS=180;
-import {exhibitStops} from './exhibit-route.js?v=12';
+import {exhibitStops} from './exhibit-route.js?v=13';
 export const destinations=[{at:0,kicker:'EGGHEAD / FUTURE ISLAND',heading:'KARAN RJ',description:'A portfolio inside the world.',name:'Island overview',cta:'Meet Karan',next:.08},...exhibitStops.map((s,i)=>({at:s.at,kicker:s.zone,heading:s.title,description:s.zone,name:s.title,cta:'Next exhibit',next:exhibitStops[i+1]?.at??0}))];
 // The ship crosses the enlarged Fabriophase before the camera visits each
 // separate portfolio district at human scale.
 export const shots=[
- [0,[200,105,280],[0,65,0],48],
+ [0,[200,105,280],[0,48,0],48],
  [.04,[191,142,270],[45,78,80],48],
  [.09,[155,130,230],[30,80,100],48],
  [.15,[36,145,228],[0,75,80],47],
  [.22,[-98,115,211],[-45,65,68],47],
  [.29,[-174,62,139],[-138,24,79],47],
+ [.325,[-177,18,108],[-150,-8,65],48],
  [.35,[-158,15,88],[-123,5,46],45]
 ];
 for(const stop of exhibitStops.slice(1)){

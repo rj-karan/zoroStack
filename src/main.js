@@ -1,9 +1,9 @@
 import './music.js?v=5';
-import {createPortfolioWorld} from './portfolio.js?v=12';
+import {createPortfolioWorld} from './portfolio.js?v=13';
 import * as T from '../assets/vendor/three.module.min.js';
 import {RoomEnvironment} from '../assets/vendor/environments/RoomEnvironment.js';
-import {createEgghead,createOcean} from './world.js?v=12';
-import {destinations,chapterIndex,TOUR_SECONDS,updateCamera,advanceJourney,cameraPose} from './journey.js?v=12';
+import {createEgghead,createOcean} from './world.js?v=13';
+import {destinations,chapterIndex,TOUR_SECONDS,updateCamera,advanceJourney,cameraPose} from './journey.js?v=13';
 
 const canvas=document.querySelector('#world'),loading=document.querySelector('#loading-copy'),enter=document.querySelector('#explore'),reduced=matchMedia('(prefers-reduced-motion: reduce)'),query=new URLSearchParams(location.search);
 let focusStop=null,focusBlend=0,focusWanted=false;
@@ -56,7 +56,7 @@ async function start(){
   const gl=renderer.getContext(),extension=gl.getExtension('WEBGL_debug_renderer_info'),name=extension?String(gl.getParameter(extension.UNMASKED_RENDERER_WEBGL)):'';const software=/swiftshader|llvmpipe|software/i.test(name),low=software||innerWidth<700||(navigator.deviceMemory||4)<4;
   canvas.dataset.renderer=name;canvas.dataset.tier=low?'low':'high';quality=software||(navigator.deviceMemory||4)<4?1:1.5;renderer.setPixelRatio(quality);renderer.setSize(innerWidth,innerHeight,false);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;
-  scene.add(new T.HemisphereLight(0xc8f3ff,0x6c88ac,1.25));const sun=new T.DirectionalLight(0xfff2db,2.5);sun.position.set(-45,95,65);sun.castShadow=true;sun.shadow.mapSize.setScalar(low?512:1536);Object.assign(sun.shadow.camera,{left:-57,right:57,top:60,bottom:-50,near:1,far:220});sun.shadow.camera.updateProjectionMatrix();sun.shadow.bias=-.0003;sun.shadow.normalBias=.06;scene.add(sun);
+  scene.add(new T.HemisphereLight(0xd9f5ff,0x63849b,.90));const sun=new T.DirectionalLight(0xfff2df,2.0);sun.position.set(-65,140,95);sun.castShadow=true;sun.shadow.mapSize.setScalar(low?512:2048);Object.assign(sun.shadow.camera,{left:-125,right:125,top:125,bottom:-125,near:1,far:360});sun.shadow.camera.updateProjectionMatrix();sun.shadow.bias=-.0003;sun.shadow.normalBias=.06;scene.add(sun);
   environment=new RoomEnvironment();pmrem=new T.PMREMGenerator(renderer);const room=pmrem.fromScene(environment,.04,.1,100,{size:low?64:128});scene.environment=room.texture;scene.environmentIntensity=.32;environment.dispose();
   const sky=new T.Mesh(new T.SphereGeometry(2500,48,24),new T.ShaderMaterial({side:T.BackSide,depthWrite:false,uniforms:{top:{value:new T.Color(0x219cE9)},bottom:{value:new T.Color(0xb4e9f8)}},vertexShader:'varying vec3 skyPosition;void main(){skyPosition=position;gl_Position=projectionMatrix*viewMatrix*vec4(position+cameraPosition,1.);}',fragmentShader:'uniform vec3 top;uniform vec3 bottom;varying vec3 skyPosition;void main(){float h=clamp(.65+normalize(skyPosition).y*1.1,.15,1.);gl_FragColor=vec4(mix(bottom,top,h),1.);\n\n#include <colorspace_fragment>\n}'}));sky.name='Sky';scene.add(sky);
   ocean=createOcean(scene);

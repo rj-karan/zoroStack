@@ -7,7 +7,7 @@ export const exhibitStops = [
  {id:'project-3',at:.63,title:'Stats Proxy',zone:'04 / API engineering',position:[1,2,20],color:0xffc72e},
  {id:'project-4',at:.70,title:'Concord',zone:'05 / DevSecOps',position:[52,2,78],color:0x19bde6},
  {id:'project-5',at:.77,title:'VigilentOps',zone:'06 / Vulnerability management',position:[82,2,42],color:0x8b47bc},
- {id:'achievements',at:.83,title:'Achievements',zone:'Recognition observatory',position:[85,2,-47],color:0xffc72e},
+ {id:'achievements',at:.83,title:'Achievements',zone:'Recognition observatory',position:[101,2,-45],color:0xffc72e},
  {id:'reports',at:.88,title:'Research & reports',zone:'Labophase / research laboratory',position:[22,108,29],color:0x25c7a9},
  {id:'cves',at:.92,title:'CVE advisories',zone:'Labophase / advisory vault',position:[7,108,32],color:0xef739b},
  {id:'articles',at:.96,title:'Articles & writeups',zone:'Punk Records / writing archive',position:[-7,108,32],color:0x19bde6},

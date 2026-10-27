@@ -1,13 +1,13 @@
 import * as T from '../assets/vendor/three.module.min.js';
 import {C,materials,add,sphere,cylinder,ring,rod,tube,roundedBox,label,mergeBone} from './geometry.js?v=4';
-import {createSunny} from './sunny.js?v=12';
-import {createBattle,createIronGiant} from './encounters.js?v=12';
+import {createSunny} from './sunny.js?v=13';
+import {createBattle,createIronGiant} from './encounters.js?v=13';
 import {microNormal} from './assembly.js?v=4';
 
 export async function createAdventure(world,zoro,{low=false}={}){
  const wind={value:0},ship=createSunny(wind);world.add(ship);
  const wood=new T.MeshStandardMaterial({vertexColors:true,roughness:.82,normalMap:microNormal(11),normalScale:new T.Vector2(.35,.35)});
- const harbor=new T.Group();harbor.name='SUNNY_HARBOUR';harbor.position.set(-95,0,23);world.add(harbor);
+ const harbor=new T.Group();harbor.name='SUNNY_HARBOUR';harbor.position.set(-95,-16,23);world.add(harbor);
  const start=new T.Vector3(-30,1.80,26),end=new T.Vector3(-49,1.80,38),direction=end.clone().sub(start).normalize(),side=new T.Vector3(-direction.z,0,direction.x);
  for(let i=0;i<38;i++){const p=start.clone().lerp(end,i/37),board=add(harbor,roundedBox(5.0,.20,.55,.055),i%3?0xb58b59:0xc69a62,p.toArray(),[1,1,1],[0,Math.atan2(direction.x,direction.z),0],wood);}
  for(const sign of [-1,1]){
@@ -20,6 +20,17 @@ export async function createAdventure(world,zoro,{low=false}={}){
  const lifebuoy=ring(harbor,[-43,2.2,35.7],.45,.12,C.coral,'z',32);for(let i=0;i<4;i++){const a=i*Math.PI/2;add(harbor,roundedBox(.19,.22,.16,.03),C.cream,[-43+Math.sin(a)*.45,2.2+Math.cos(a)*.45,35.72],[1,1,1],[0,0,-a]);}
  const approach=new T.CatmullRomCurve3([[-36,1.91,28],[-33,1.91,24],[-29,1.91,19],[-22,1.91,16]].map(p=>new T.Vector3(...p)));
  for(let i=0;i<24;i++){const a=approach.getPoint(i/24),b=approach.getPoint((i+1)/24),d=b.clone().sub(a),p=a.clone().add(b).multiplyScalar(.5);add(harbor,roundedBox(2.8,.12,d.length()+.1,.035),C.cream,p.toArray(),[1,1,1],[0,Math.atan2(d.x,d.z),0]);}
+ // A cliffside lift connects the harbour deck at sea level to Fabriophase.
+ const portLift=new T.Group();portLift.name='CLIFFSIDE_SUNNY_PORT_LIFT';portLift.position.set(-125,-15.7,49);world.add(portLift);
+ for(const s of [-1,1]){
+  rod(portLift,[s*1.9,0,0],[s*1.9,18,0],.20,C.cream);
+  for(let j=0;j<10;j++)rod(portLift,[s*1.9,j*1.8,0],[-s*1.9,j*1.8+1.8,0],.07,C.cyan);
+ }
+ for(const y of [.4,17.4]){
+  add(portLift,roundedBox(5,.35,4,.12),C.white,[0,y,0]);ring(portLift,[0,y+.2,0],2.3,.07,C.gold);
+ }
+ for(const y of [3,7,11,15]){ring(portLift,[0,y,0],2.5,.09,C.cyan);sphere(portLift,[0,y,2.5],[.15,.15,.15],C.yellow);}
+ label(portLift,'PORT LIFT / 01',[0,15.1,2.7],4.5,.65,{color:'#f7f7df',background:'#214b69',font:'bold 86px Arial'});
  await new Promise(r=>setTimeout(r,0));
  // A real outer district and technical streets expand the island's footprint.
  const district=new T.Group();district.name='OUTER_FABRIOPHASE_DISTRICT';world.add(district);const lots=[[-42,8],[-43,-7],[-33,-28],[-19,-35],[1,-37],[25,-31],[39,-24],[46,5],[39,27],[23,35],[-14,37],[-29,31]];
@@ -63,7 +74,7 @@ export async function createAdventure(world,zoro,{low=false}={}){
   const core=new T.Mesh(new T.ConeGeometry(.28,4.5,20),innerFlame);core.rotation.x=-Math.PI/2;core.position.z=-3.25;nozzle.add(core);
   for(let i=0;i<3;i++){const halo=new T.Mesh(new T.TorusGeometry(.7+i*.35,.07,6,24),blueFlame);halo.position.z=-2.1-i*1.25;nozzle.add(halo);}
  }
- const flightPath=new T.CatmullRomCurve3([[170,80,135],[165,88,210],[65,105,205],[-45,95,175],[-115,62,120],[-152,28,102],[-150,-2.8,60]].map(v=>new T.Vector3(...v)),false,'centripetal');
+ const flightPath=new T.CatmullRomCurve3([[170,80,135],[165,88,210],[65,105,205],[-45,95,175],[-115,62,120],[-152,25,102],[-150,-17.8,60]].map(v=>new T.Vector3(...v)),false,'centripetal');
  const trackingMatrix=new T.Matrix4(),trackingOrientation=new T.Quaternion(),trackingUp=new T.Vector3(0,1,0);
  let shipStart=0,u=0,shipState='airborne',replayingShip=false,fightState={},giantState={};
  return {replay(time,progress){if(progress<.365){shipStart=time;replayingShip=true;}else if(progress<.67)battle.replay(time);else giant.replay(time);},update(time,progress){
@@ -77,7 +88,7 @@ export async function createAdventure(world,zoro,{low=false}={}){
   burst.visible=progress>.055&&progress<.235&&u<.84;
   if(burst.visible){burst.scale.setScalar(.86+.17*Math.sin(time*12));blueFlame.opacity=.52+.12*Math.sin(time*11);}
   shipState=u<.18?'approach':u<.65?'coup-de-burst':u<.94?'descending':u<.995?'splashdown':'afloat';
-  splash.position.set(-150,-2.40,60);splash.visible=u>.93;
+  splash.position.set(-150,-17.40,60);splash.visible=u>.93;
   waves.forEach((mesh,i)=>{const t=(time*.28+i/3)%1;mesh.scale.setScalar(2+t*9);mesh.position.y=.02*i;});foam.opacity=.55;
   let count=0;if(u>.92&&u<1){for(let i=0;i<28;i++){const a=i*2.4,t=(u-.92)/.08;dummy.position.set(Math.sin(a)*(2+t*5),Math.sin(t*Math.PI)*(1.5+i%4*.4),Math.cos(a)*(2+t*4));dummy.scale.set(.6,1.5,.6);dummy.updateMatrix();drops.setMatrixAt(count++,dummy.matrix);}}drops.count=count;drops.instanceMatrix.needsUpdate=true;
   battle.update(time,progress);giant.update(time,progress);fightState=battle.diagnostics();giantState=giant.diagnostics();turbines.forEach((o,i)=>o.rotation.z=time*(.22+i*.05));

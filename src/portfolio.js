@@ -1,6 +1,6 @@
 import * as T from '../assets/vendor/three.module.min.js';
 import {C,materials,add,sphere,cylinder,ring,rod,tube,roundedBox,label,batchWorld} from './geometry.js?v=4';
-import {exhibitStops} from './exhibit-route.js?v=12';
+import {exhibitStops} from './exhibit-route.js?v=13';
 
 export function safeUrl(value){
  try{const u=new URL(String(value||''),location.href);return value&&['https:','http:','mailto:'].includes(u.protocol)?u.href:null;}catch{return null;}

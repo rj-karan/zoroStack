@@ -4,13 +4,13 @@ The current world uses local Three.js 0.180.0 (MIT; `assets/vendor/three-LICENSE
 
 The previous Island Tree 01 GLBs, packed tree Blender source and photographic sky JPEG are retained locally as unused historical assets. They are no longer loaded and are excluded from this publication. All mentions of them in the historical notes below refer to the earlier revision.
 
-The current island has radii of 132 × 106 world units, one fifth of the land area of the previous 295 × 237 version. Human and ship geometry retain their authored scale. `src/megaworld.js` uses instanced geometry for 270 canopy clusters, 112 shoreline rocks, 39 palms and 33 scattered science pods. The prior road rings and dense repeated city grid were removed. The skyline is gathered inside a rocky green coastline under a broad cloud layer and Punk Records. Twelve physical exhibits retain separate project, achievement, report, CVE, writing and contact locations. This remains an independently authored 3D fan-art interpretation rather than a frame-perfect reproduction.
+The current island has radii of 132 × 106 world units, one fifth of the land area of the earlier 295 × 237 version. Human and Sunny geometry retain their authored scale. `src/megaworld.js` makes the forest, tropical palms, four architectural families, bubble habitats and city grid. `src/world.js` makes the taller layered cliffs, textured cloud shapes, Punk Records, transit and sea. `src/fleet.js` adds independently authored Marine and pirate ships around the island. These are original 3D fan-art meshes modeled from the submitted visual references; the reference screenshots are not bundled as runtime images. Twelve physical exhibits retain separate project, achievement, report, CVE, writing and contact locations. This remains an independently authored interpretation, not official production geometry or a frame-perfect reconstruction.
 
-Official reference sources consulted for this revision:
-- https://one-piece.com/story/egghead/index.html
+Reference sources consulted for the visual study:
+- https://one-piece.com/story/egghead/index.html (official story and island context)
+- https://one-piece.com/character/Emet/index.html (official Emet description and Fabriophase location)
 - https://images.everyeye.it/img-notizie/one-piece-saga-egghead-finita-eccovi-riassunto-restare-pari-v4-747200-1280x960.webp (anime still studied for the coast, cloud and upper lab silhouette; not included as a runtime asset)
 - https://one-piece.com/figure/71487/index.html
-- https://one-piece.com/character/Emet/index.html
 
 Current verification captures: `docs/screenshots/current/`. Older reports and screenshots below are historical, not measurements of this revision.
 

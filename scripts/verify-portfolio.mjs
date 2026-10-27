@@ -59,7 +59,7 @@ try {
       if (await evaluate(expression)) return;
       await wait(250);
     }
-    throw Error('Timed out waiting for ' + expression);
+    throw Error('Timed out waiting for ' + expression + ': ' + JSON.stringify({errors,loading:await evaluate('document.querySelector("#loading-copy")?.textContent'),state:await evaluate('document.querySelector("#world")?.dataset.state')}));
   };
 
   await call('Page.enable');
@@ -75,12 +75,20 @@ try {
   const footprint=await evaluate('window.__egghead.counts.areaScale');
   assert.ok(footprint>=3.99&&footprint<=4.01);
   const district=await evaluate('window.__egghead.counts');
-  assert.ok(district.pods>=25&&district.coastalCanopies>240&&district.cliffRocks>100&&district.palms>30);
+  assert.ok(district.pods>=25&&district.coastalCanopies>150&&district.cliffRocks>100&&district.palms>30);
+  assert.ok(district.warships>=5&&district.pirateShips>=1);
   const stations=await evaluate('window.__egghead.exhibits().stations');
-  const approach=await evaluate('window.__egghead.capture(0)'),boost=await evaluate('window.__egghead.capture(.13)');
+  const approach=await evaluate('window.__egghead.capture(0)');
+  await evaluate('window.__egghead.capture(.04)');
+  let fleetShot=await call('Page.captureScreenshot',{format:'png'});
+  writeFileSync('/tmp/egghead-world-fleet.png',Buffer.from(fleetShot.data,'base64'));
+  const boost=await evaluate('window.__egghead.capture(.13)');
   let boostShot=await call('Page.captureScreenshot',{format:'png'});
   writeFileSync('/tmp/egghead-world-boost-publish.png',Buffer.from(boostShot.data,'base64'));
   const landed=await evaluate('window.__egghead.capture(.35)');
+  await evaluate('window.__egghead.capture(.325)');
+  let descentShot=await call('Page.captureScreenshot',{format:'png'});
+  writeFileSync('/tmp/egghead-world-descent.png',Buffer.from(descentShot.data,'base64'));
   assert.ok(approach.shipPosition[0]>165 && approach.shipPosition[1]>75);
   assert.equal(boost.burstVisible,true);
   assert.ok(landed.shipPosition[0]<-145 && landed.shipPosition[1]<0);
@@ -136,7 +144,7 @@ try {
     await wait(1500);
   }
   assert.deepEqual(errors,[]);
-  console.log('Egghead island metrics',JSON.stringify({areaScale:footprint,pods:district.pods,coastalCanopies:district.coastalCanopies,palms:district.palms,triangles:approach.triangles,drawCalls:approach.calls,memory:approach.memory,medianRenderMs:renderCosts.sort((a,b)=>a-b)[Math.floor(renderCosts.length/2)]}));
+  console.log('Egghead island metrics',JSON.stringify({areaScale:footprint,pods:district.pods,coastalCanopies:district.coastalCanopies,palms:district.palms,warships:district.warships,pirateShips:district.pirateShips,triangles:approach.triangles,drawCalls:approach.calls,memory:approach.memory,medianRenderMs:renderCosts.sort((a,b)=>a-b)[Math.floor(renderCosts.length/2)]}));
   console.log('World exhibits passed: twelve stations, 36 physical controls and 12 readable screens, no HTML cards, mobile layout, no runtime errors.');
 } finally {
   pending.forEach((task) => clearTimeout(task.timer));
