@@ -15,6 +15,11 @@ function palmLeaf(){
  }
  const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(vertices,3));g.setIndex(indices);g.computeVertexNormals();return g;
 }
+function forestLeaf(){
+ const g=new T.BufferGeometry();
+ g.setAttribute('position',new T.Float32BufferAttribute([0,0,0,-.38,.12,.36,0,.22,.58,.38,.12,.36,0,-.17,1],3));
+ g.setIndex([0,1,2,0,2,3,1,4,2,2,4,3]);g.computeVertexNormals();return g;
+}
 function grassClump(){
  const v=[],uv=[],ix=[];
  for(let blade=0;blade<5;blade++){
@@ -37,7 +42,7 @@ function groundPatch(){
 }
 function instances(parent,name,geometry,placements,material=painted){
  const mesh=new T.InstancedMesh(geometry,material,placements.length),dummy=new T.Object3D();mesh.name=name;
- placements.forEach(([x,y,z,sx,sy,sz,color,angle=0],i)=>{dummy.position.set(x,y,z);dummy.rotation.set(0,angle,0);dummy.scale.set(sx,sy,sz);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);mesh.setColorAt(i,new T.Color(color));});
+ placements.forEach(([x,y,z,sx,sy,sz,color,angle=0],i)=>{dummy.position.set(x,y,z);dummy.rotation.set(...(Array.isArray(angle)?angle:[0,angle,0]));dummy.scale.set(sx,sy,sz);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);mesh.setColorAt(i,new T.Color(color));});
  mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;mesh.castShadow=false;mesh.receiveShadow=true;mesh.frustumCulled=false;parent.add(mesh);
  return mesh;
 }
@@ -141,26 +146,36 @@ function bubbleHabitat(parent,x,z,colour,n){
 }
 export function createMegaFabriophase(world,{low=false}={}){
  const district=new T.Group();district.name='FABRIOPHASE_FOREST_AND_CITY';world.add(district);
- const foliage=[],lowerLeaves=[],upperTufts=[],leaflets=[],trunks=[],fronds=[],rocks=[],roofs=[],columns=[],windows=[],antennae=[],grass=[],moss=[];
+ const canopyLeaves=[],canopyCores=[],forestTrunks=[],forestBranches=[],understoryLeaves=[],trunks=[],fronds=[],rocks=[],roofs=[],columns=[],windows=[],antennae=[],grass=[],moss=[];
  let palms=0,pods=0;
- // The dark, irregular vegetation belt frames a smaller city. Leave the port open.
- for(let i=0;i<440;i++){
-  const a=i*2.3999632,r=67+random()*81,x=Math.cos(a)*r,z=Math.sin(a)*r*.802;
+ // Tall trunks, separate leaf fans and a low understory replace the old dome-like canopy.
+ for(let i=0;i<(low?470:660);i++){
+  const a=i*2.3999632,r=64+random()*88,x=Math.cos(a)*r,z=Math.sin(a)*r*.802;
   if(x < -142 && z>10 && z<82||!sightlineClear(x,z))continue;
-  const size=2.8+random()*5.5,depth=3+random()*4;
-  foliage.push([x,2.8+random()*2,z,size,size*.65,depth,[0x2c663c,0x3c7642,0x265c4f,0x568943,0x648d47][i%5],a]);
-  const canopyY=foliage[foliage.length-1][1];
-  for(let leaf=0;leaf<8;leaf++){
-   const theta=random()*Math.PI*2,elevation=.2+random()*1.15;
-   leaflets.push([x+Math.cos(theta)*size*.75*Math.cos(elevation),canopyY+Math.sin(elevation)*size*.64,z+Math.sin(theta)*depth*.75*Math.cos(elevation),.34+random()*.4,.14+random()*.20,.48+random()*.35,[0x1e5735,0x2a7040,0x4e8d49,0x85a653][(i+leaf)%4],theta]);
+  const height=7.5+random()*7.5,width=4.3+random()*3.7,crownY=1.75+height;
+  forestTrunks.push([x,1.75+height*.5,z,.43+random()*.3,height,.43+random()*.3,[0x5d4935,0x71573b,0x846448][i%3],a]);
+  canopyCores.push([x,crownY-.15,z,width*.38,1.2+random()*.6,width*.37,[0x1b5936,0x22683d,0x367841][i%3],a]);
+  for(let f=0;f<12;f++){
+   const angle=f*Math.PI*2/12+random()*.38,tier=f%4===0?-.8:f%3===0?.75:0;
+   const origin=(f%3)*.55,length=width*(.8+random()*.6);
+   canopyLeaves.push([x+Math.sin(angle)*origin,crownY+tier,z+Math.cos(angle)*origin,2.2+random()*1.5,1.1+random()*.35,length,[0x174f32,0x246d3b,0x348044,0x4b9146,0x6da34d][(i+f)%5],[.04+random()*.17,angle,0]]);
   }
-  if(i%3===0)lowerLeaves.push([x+(random()-.5)*3,1.8,z,size*.9,1.5,depth*.8,0x284f38,a]);
-  for(let f=0;f<3;f++){const q=f*Math.PI*2/3+a;
-   upperTufts.push([x+Math.sin(q)*size*.43,4.2+size*.26,z+Math.cos(q)*depth*.38,size*.43,size*.31,depth*.42,f%2?0x4c8e43:0x5d9c49,q]);
+  for(let b=0;b<3;b++){
+   const angle=a+b*Math.PI*2/3,length=2+random()*2.1;
+   forestBranches.push([x+Math.sin(angle)*length*.36,crownY-2.3+b*.45,z+Math.cos(angle)*length*.36,.16,length,.16,0x665039,[Math.PI/2-.45,angle,0]]);
   }
-  if(i%7===0){const h=7+random()*4;palms++;
-   trunks.push([x,2+h/2,z,.25,h,.25,0x94784a,a]);
-   for(let f=0;f<9;f++){const q=f*Math.PI*2/9;fronds.push([x,2+h,z,1,1,1,f%2?0x326e40:0x529043,q]);}
+  const shrubs=2+(i%2);
+  for(let s=0;s<shrubs;s++){
+   const q=a+s*Math.PI*2/shrubs,px=x+Math.sin(q)*(1.8+random()*2),pz=z+Math.cos(q)*(1.8+random()*2);
+   if(!sightlineClear(px,pz))continue;
+   for(let l=0;l<5;l++){
+    const direction=l*Math.PI*2/5+q;
+    understoryLeaves.push([px,2.0+random()*.6,pz,.9+random()*.55,1,2.3+random()*1.0,[0x205b37,0x337846,0x458c4e,0x6a9953][(i+s+l)%4],[.15+random()*.2,direction,0]]);
+   }
+  }
+  if(i%5===0){const h=11+random()*6;palms++;
+   trunks.push([x+2,1.75+h/2,z-1,.22,h,.22,0x94784a,a]);
+   for(let f=0;f<10;f++){const q=f*Math.PI*2/10;fronds.push([x+2,1.75+h,z-1,1.1,1,1.1,f%2?0x326e40:0x529043,q]);}
   }
  }
  for(let i=0;i<(low?2800:5000);i++){
@@ -193,10 +208,12 @@ export function createMegaFabriophase(world,{low=false}={}){
   windows.push([x,2+h*.66,z+w*.57,w*.28,.45,.1,0x267aa0]);
   if(i%3===0)antennae.push([x,2+h+w*.6+1,z,.09,2,.09,C.gold]);
  }
- instances(district,'Coastal_Forest_Canopies',new T.IcosahedronGeometry(1,2),foliage);
- instances(district,'Coastal_Forest_Undergrowth',new T.IcosahedronGeometry(1,1),lowerLeaves);
- instances(district,'Coastal_Forest_Leaf_Tufts',new T.IcosahedronGeometry(1,1),upperTufts);
- instances(district,'Coastal_Forest_Leaf_Detail',new T.TetrahedronGeometry(1,0),leaflets);
+ const leafMaterial=new T.MeshLambertMaterial({color:0xffffff,side:T.DoubleSide});
+ instances(district,'Coastal_Forest_Trunks',new T.CylinderGeometry(.64,1,1,7),forestTrunks);
+ instances(district,'Coastal_Forest_Branches',new T.CylinderGeometry(.55,1,1,5),forestBranches);
+ instances(district,'Coastal_Forest_Canopy_Cores',new T.IcosahedronGeometry(1,1),canopyCores);
+ instances(district,'Coastal_Forest_Leaf_Fans',forestLeaf(),canopyLeaves,leafMaterial).receiveShadow=false;
+ instances(district,'Coastal_Forest_Understory',forestLeaf(),understoryLeaves,leafMaterial).receiveShadow=false;
  instances(district,'Egghead_Living_Grass',grassClump(),grass,new T.MeshStandardMaterial({color:0xffffff,roughness:1,side:T.DoubleSide}));
  instances(district,'Moss_And_Meadow_Patches',groundPatch(),moss,new T.MeshStandardMaterial({color:0xffffff,roughness:1,side:T.DoubleSide}));
  instances(district,'Weathered_Cliff_Faces',new T.DodecahedronGeometry(1,0),rocks);
@@ -227,5 +244,5 @@ export function createMegaFabriophase(world,{low=false}={}){
  for(const [x,z,c] of [[-46,49,C.cyan],[39,54,C.pink],[-3,68,C.yellow]]){
   if(exhibitClearance(x,z,12)&&sightlineClear(x,z)){bubbleHabitat(district,x,z,c,habitats);habitats++;}
  }
- return {radiusX:ISLAND_RADII.x,radiusZ:ISLAND_RADII.z,areaScale:(ISLAND_RADII.x*ISLAND_RADII.z)/(66*53),pods,palms,coastalCanopies:foliage.length,leafDetails:leaflets.length,grassClumps:grass.length,mossPatches:moss.length,cliffRocks:rocks.length,detailedBuildings,habitats};
+ return {radiusX:ISLAND_RADII.x,radiusZ:ISLAND_RADII.z,areaScale:(ISLAND_RADII.x*ISLAND_RADII.z)/(66*53),pods,palms,coastalCanopies:canopyCores.length,leafDetails:canopyLeaves.length,forestTrunks:forestTrunks.length,understoryLeaves:understoryLeaves.length,grassClumps:grass.length,mossPatches:moss.length,cliffRocks:rocks.length,detailedBuildings,habitats};
 }

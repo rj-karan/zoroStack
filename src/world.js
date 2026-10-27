@@ -3,7 +3,7 @@ import {mergeGeometries} from '../assets/vendor/utils/BufferGeometryUtils.js';
 import {C,materials,paint,add,sphere,cylinder,ring,rod,tube,roundedBox,label,batchWorld} from './geometry.js?v=4';
 import {createZoro} from './zoro.js?v=5';
 import {createAdventure} from './adventure.js?v=14';
-import {createMegaFabriophase,ISLAND_RADII} from './megaworld.js?v=14';
+import {createMegaFabriophase,ISLAND_RADII} from './megaworld.js?v=15';
 import {createSeaFleet} from './fleet.js?v=13';
 import {createEggheadMachines} from './creatures.js?v=14';
 
